@@ -1,0 +1,2162 @@
+Help on module pycudd:
+
+NAME
+    pycudd
+
+FILE
+    /home/kus/aur/pycudd2.0.2/pycudd/pycudd.py
+
+DESCRIPTION
+    PyCUDD 2.0.1
+    Python interface to Colorado University Decision Diagram package
+    With BREL support
+    Compiled on May 25 2012, 09:50:22
+    Bugs to:aravind@engr.ucsb.edu
+
+CLASSES
+    __builtin__.object
+        DdArray
+        DdGen
+        DdManager
+        DdNode
+        DdTlcInfo
+        DoubleArray
+        EpDouble
+        IntArray
+        MtrNode
+        NodePair
+        RangeError
+        StringArray
+    ForeachCubeIterator
+    ForeachNodeIterator
+    ForeachPrimeIterator
+    
+    class DdArray(__builtin__.object)
+     |  This class provides an array of DdNodes. This is an addition to the CUDD package. Create a DdArray by calling the constructor with the length of the array. In terms of Python array-like behaviour, you can index it, assign individual elements and take its length. Typically, these arrays are populated via the Push method. Refer pycudd.h and pycudd.cpp for function details.<br>
+     |  
+     |  Methods defined here:
+     |  
+     |  And(self)
+     |      And(DdArray self) -> DdNode
+     |  
+     |  ArrayLoad(self, *args)
+     |      ArrayLoad(DdArray self, int rootmatchmode, StringArray rootmatchnames, int varmatchmode, StringArray varmatchnames, 
+     |          IntArray varmatchauxids, IntArray varcomposeids, int mode, char * filename, 
+     |          FILE * fp=None) -> int
+     |      ArrayLoad(DdArray self, int rootmatchmode, StringArray rootmatchnames, int varmatchmode, StringArray varmatchnames, 
+     |          IntArray varmatchauxids, IntArray varcomposeids, int mode, char * filename) -> int
+     |  
+     |  ArrayStore(self, *args)
+     |      ArrayStore(DdArray self, char * ddname, StringArray rootnames, StringArray varnames, IntArray auxids, int mode, 
+     |          int varinfo, char * filename, FILE * fp=None) -> int
+     |      ArrayStore(DdArray self, char * ddname, StringArray rootnames, StringArray varnames, IntArray auxids, int mode, 
+     |          int varinfo, char * filename) -> int
+     |  
+     |  Assign(self, *args)
+     |      Assign(DdArray self, DdNode ** list, int k)
+     |  
+     |  AtLeastN(self, *args)
+     |      AtLeastN(DdArray self, int n) -> DdNode
+     |  
+     |  Compose(self, *args)
+     |      Compose(DdArray self, DdNode term) -> DdNode
+     |  
+     |  Constraint(self, *args)
+     |      Constraint(DdArray self, int low, int high) -> DdNode
+     |  
+     |  ExactlyN(self, *args)
+     |      ExactlyN(DdArray self, int n) -> DdNode
+     |  
+     |  Fill(self, *args)
+     |      Fill(DdArray self, int offset, int mod)
+     |  
+     |  FillWithIntArray(self, *args)
+     |      FillWithIntArray(DdArray self, IntArray t)
+     |  
+     |  Find(self, *args)
+     |      Find(DdArray self, DdNode term) -> int
+     |  
+     |  HoldTR(self, *args)
+     |      HoldTR(DdArray self, DdArray other) -> DdNode
+     |  
+     |  Load(self, *args)
+     |      Load(DdArray self, char * filename) -> int
+     |  
+     |  LoadText(self, *args)
+     |      LoadText(DdArray self, char * filename) -> int
+     |  
+     |  Or(self)
+     |      Or(DdArray self) -> DdNode
+     |  
+     |  OrderVector(self, *args)
+     |      OrderVector(DdArray self, int left, int right)
+     |  
+     |  PickOneMinterm(self, *args)
+     |      PickOneMinterm(DdArray self, DdNode term) -> DdNode
+     |  
+     |  Pop(self)
+     |      Pop(DdArray self) -> DdNode
+     |  
+     |  Push(self, *args)
+     |      Push(DdArray self, DdNode val)
+     |  
+     |  Save(self, *args)
+     |      Save(DdArray self, char * filename) -> int
+     |  
+     |  SaveText(self, *args)
+     |      SaveText(DdArray self, char * filename) -> int
+     |  
+     |  SetVarMap(self, *args)
+     |      SetVarMap(DdArray self, DdArray other) -> int
+     |  
+     |  SupportVector(self, *args)
+     |      SupportVector(DdArray self, DdNode term)
+     |  
+     |  Swap(self, *args)
+     |      Swap(DdArray self, int i, int j)
+     |  
+     |  SwapNodes(self, *args)
+     |      SwapNodes(DdArray self, int i, int j)
+     |  
+     |  UpToN(self, *args)
+     |      UpToN(DdArray self, int n) -> DdNode
+     |  
+     |  VectorSupport(self)
+     |      VectorSupport(DdArray self) -> DdNode
+     |  
+     |  VectorSupportIndex(self)
+     |      VectorSupportIndex(DdArray self) -> int
+     |  
+     |  __del__ lambda self
+     |  
+     |  __getattr__ lambda self, name
+     |  
+     |  __getitem__(self, *args)
+     |      __getitem__(DdArray self, int j) -> DdNode
+     |  
+     |  __init__(self, *args)
+     |      __init__(DdArray self, int size) -> DdArray
+     |  
+     |  __len__(self)
+     |      __len__(DdArray self) -> int
+     |  
+     |  __repr__ = _swig_repr(self)
+     |  
+     |  __setattr__ lambda self, name, value
+     |  
+     |  __setitem__(self, *args)
+     |      __setitem__(DdArray self, int j, DdNode val)
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |  
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |  
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+     |  
+     |  sz
+     |      DdArray_sz_get(DdArray self) -> int
+     |  
+     |  vec
+     |      DdArray_vec_get(DdArray self) -> DdNode **
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |  
+     |  __swig_destroy__ = <built-in function delete_DdArray>
+     |      delete_DdArray(DdArray self)
+     |  
+     |  __swig_getmethods__ = {'sz': <built-in function DdArray_sz_get>, 'vec'...
+     |  
+     |  __swig_setmethods__ = {'sz': <built-in function DdArray_sz_set>, 'vec'...
+    
+    class DdGen(__builtin__.object)
+     |  Not expected to be used directly.
+     |  
+     |  Methods defined here:
+     |  
+     |  __del__ lambda self
+     |  
+     |  __getattr__ lambda self, name
+     |  
+     |  __init__(self, *args)
+     |      __init__(DdGen self, DdNode node1, int method, DdNode node2=None) -> DdGen
+     |      __init__(DdGen self, DdNode node1, int method) -> DdGen
+     |  
+     |  __repr__ = _swig_repr(self)
+     |  
+     |  __setattr__ lambda self, name, value
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |  
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |  
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |  
+     |  __swig_destroy__ = <built-in function delete_DdGen>
+     |      delete_DdGen(DdGen self)
+     |  
+     |  __swig_getmethods__ = {}
+     |  
+     |  __swig_setmethods__ = {}
+
+  class DdManager(__builtin__.object)
+     |  This class wraps around the DdManager. The methods defined by this class provide themselves as the DdManager option (if needed). To use PyCUDD, you must have at least one DdManager instance and you must set DdManager.SetDefault before using any of the other functions. These functions are provided through ddmanager.i.
+     |  
+     |  Methods defined here:
+     |  
+     |  ApaAdd(self, *args)
+     |      ApaAdd(DdManager self, int digits, DdApaNumber a, DdApaNumber b, DdApaNumber sum) -> DdApaDigit
+     |  
+     |  ApaCompare(self, *args)
+     |      ApaCompare(DdManager self, int digitsFirst, DdApaNumber first, int digitsSecond, DdApaNumber second) -> int
+     |  
+     |  ApaCompareRatios(self, *args)
+     |      ApaCompareRatios(DdManager self, int digitsFirst, DdApaNumber firstNum, unsigned int firstDen, int digitsSecond, DdApaNumber secondNum, 
+     |          unsigned int secondDen) -> int
+     |  
+     |  ApaCopy(self, *args)
+     |      ApaCopy(DdManager self, int digits, DdApaNumber source, DdApaNumber dest)
+     |  
+     |  ApaIntDivision(self, *args)
+     |      ApaIntDivision(DdManager self, int digits, DdApaNumber dividend, unsigned int divisor, DdApaNumber quotient) -> unsigned int
+     |  
+     |  ApaNumberOfDigits(self, *args)
+     |      ApaNumberOfDigits(DdManager self, int binaryDigits) -> int
+     |  
+     |  ApaPowerOfTwo(self, *args)
+     |      ApaPowerOfTwo(DdManager self, int digits, DdApaNumber number, int power)
+     |  
+     |  ApaPrintDecimal(self, *args)
+     |      ApaPrintDecimal(DdManager self, FILE * fp, int digits, DdApaNumber number) -> int
+     |  
+     |  ApaPrintExponential(self, *args)
+     |      ApaPrintExponential(DdManager self, FILE * fp, int digits, DdApaNumber number, int precision) -> int
+     |  
+     |  ApaPrintHex(self, *args)
+     |      ApaPrintHex(DdManager self, FILE * fp, int digits, DdApaNumber number) -> int
+     |  
+     |  ApaSetToLiteral(self, *args)
+     |      ApaSetToLiteral(DdManager self, int digits, DdApaNumber number, DdApaDigit literal)
+     |  
+     |  ApaShiftRight(self, *args)
+     |      ApaShiftRight(DdManager self, int digits, DdApaDigit _in, DdApaNumber a, DdApaNumber b)
+     |  
+     |  ApaShortDivision(self, *args)
+     |      ApaShortDivision(DdManager self, int digits, DdApaNumber dividend, DdApaDigit divisor, DdApaNumber quotient) -> DdApaDigit
+     |  
+     |  ApaSubtract(self, *args)
+     |      ApaSubtract(DdManager self, int digits, DdApaNumber a, DdApaNumber b, DdApaNumber diff) -> DdApaDigit
+     |  
+     |  ArrayLoad(self, *args)
+     |      ArrayLoad(DdManager self, int rootmatchmode, char ** rootmatchnames, int varmatchmode, char ** varmatchnames, 
+     |          IntArray varmatchauxids, IntArray varcomposeids, int mode, char * filename, 
+     |          FILE * fp, DdArray pproots) -> int
+     |  
+     |  ArrayStore(self, *args)
+     |      ArrayStore(DdManager self, char * ddname, DdArray roots, char ** rootnames, char ** varnames, IntArray auxids, 
+     |          int mode, int varinfo, char * filename, FILE * fp) -> int
+     |  
+     |  AutodynDisable(self)
+     |      AutodynDisable(DdManager self)
+     |  
+     |  AutodynDisableZdd(self)
+     |      AutodynDisableZdd(DdManager self)
+     |  
+     |  AutodynEnable(self, *args)
+     |      AutodynEnable(DdManager self, int method)
+     |  
+     |  AutodynEnableZdd(self, *args)
+     |      AutodynEnableZdd(DdManager self, int method)
+     |  
+     |  AverageDistance(self)
+     |      AverageDistance(DdManager self) -> double
+     |  
+     |  BddLoad(self, *args)
+     |      BddLoad(DdManager self, int varmatchmode, char ** varmatchnames, IntArray varmatchauxids, IntArray varcomposeids, 
+     |          int mode, char * filename, FILE * fp) -> DdNode
+     |  
+     |  BddStore(self, *args)
+     |      BddStore(DdManager self, char * ddname, DdNode f, char ** varnames, IntArray auxids, int mode, int varinfo, 
+     |          char * fname, FILE * fp) -> int
+     |  
+     |  BddToAdd(self, *args)
+     |      BddToAdd(DdManager self, DdNode B) -> DdNode
+     |  
+     |  Bin2Text(self, *args)
+     |      Bin2Text(DdManager self, char * filein, char * fileout) -> int
+     |  
+     |  BindVar(self, *args)
+     |      BindVar(DdManager self, int index) -> int
+     |  
+     |  CheckKeys(self)
+     |      CheckKeys(DdManager self) -> int
+     |  
+     |  CheckZeroRef(self)
+     |      CheckZeroRef(DdManager self) -> int
+     |  
+     |  ClassifySupport(self, *args)
+     |      ClassifySupport(DdManager self, DdNode f, DdNode g, DdArray common, DdArray onlyF, DdArray onlyG) -> int
+     |  
+     |  ClearErrorCode(self)
+     |      ClearErrorCode(DdManager self)
+     |  
+     |  ComputeCube(self, *args)
+     |      ComputeCube(DdManager self, DdArray vars, IntArray phase, int n) -> DdNode
+     |  
+     |  CubeArrayToBdd(self, *args)
+     |      CubeArrayToBdd(DdManager self, IntArray y) -> DdNode
+     |  
+     |  DeadAreCounted(self)
+     |      DeadAreCounted(DdManager self) -> int
+     |  
+     |  DebugCheck(self)
+     |      DebugCheck(DdManager self) -> int
+     |  
+     |  DisableGarbageCollection(self)
+     |      DisableGarbageCollection(DdManager self)
+     |  
+     |  DisableReorderingReporting(self)
+     |      DisableReorderingReporting(DdManager self) -> int
+     |  
+     |  DisplayBinary(self, *args)
+     |      DisplayBinary(DdManager self, char * filein, char * fileout) -> int
+     |  
+     |  DumpBlif(self, *args)
+     |      DumpBlif(DdManager self, int n, DdArray f, char ** inames, char ** onames, char * mname, FILE * fp, int mv) -> int
+     |  
+     |  DumpBlifBody(self, *args)
+     |      DumpBlifBody(DdManager self, int n, DdArray f, char ** inames, char ** onames, FILE * fp, int mv) -> int
+     |  
+     |  DumpDDcal(self, *args)
+     |      DumpDDcal(DdManager self, int n, DdArray f, char ** inames, char ** onames, FILE * fp) -> int
+     |  
+     |  DumpDaVinci(self, *args)
+     |      DumpDaVinci(DdManager self, int n, DdArray f, char ** inames, char ** onames, FILE * fp) -> int
+     |  
+     |  DumpDot(self, *args)
+     |      DumpDot(DdManager self, int n, DdArray f, char ** inames, char ** onames, FILE * fp) -> int
+     |  
+     |  DumpFactoredForm(self, *args)
+     |      DumpFactoredForm(DdManager self, int n, DdArray f, char ** inames, char ** onames, FILE * fp) -> int
+     |  
+     |  Dxygtdxz(self, *args)
+     |      Dxygtdxz(DdManager self, int N, DdArray x, DdArray y, DdArray z) -> DdNode
+     |  
+     |  Dxygtdyz(self, *args)
+     |      Dxygtdyz(DdManager self, int N, DdArray x, DdArray y, DdArray z) -> DdNode
+     |  
+     |  EnableGarbageCollection(self)
+     |      EnableGarbageCollection(DdManager self)
+     |  
+     |  EnableReorderingReporting(self)
+     |      EnableReorderingReporting(DdManager self) -> int
+     |  
+     |  ExpectedUsedSlots(self)
+     |      ExpectedUsedSlots(DdManager self) -> double
+     |  
+     |  FreeTree(self)
+     |      FreeTree(DdManager self)
+     |  
+     |  FreeZddTree(self)
+     |      FreeZddTree(DdManager self)
+     |  
+     |  GarbageCollect(self, *args)
+     |      GarbageCollect(DdManager self, int clearCache) -> int
+     |  
+     |  GarbageCollectionEnabled(self)
+     |      GarbageCollectionEnabled(DdManager self) -> int
+     |  
+     |  IndicesToCube(self, *args)
+     |      IndicesToCube(DdManager self, IntArray array, int n) -> DdNode
+     |  
+     |  IsNsVar(self, *args)
+     |      IsNsVar(DdManager self, int index) -> int
+     |  
+     |  IsPiVar(self, *args)
+     |      IsPiVar(DdManager self, int index) -> int
+     |  
+     |  IsPsVar(self, *args)
+     |      IsPsVar(DdManager self, int index) -> int
+     |  
+     |  IsVarHardGroup(self, *args)
+     |      IsVarHardGroup(DdManager self, int index) -> int
+     |  
+     |  IsVarToBeGrouped(self, *args)
+     |      IsVarToBeGrouped(DdManager self, int index) -> int
+     |  
+     |  IsVarToBeUngrouped(self, *args)
+     |      IsVarToBeUngrouped(DdManager self, int index) -> int
+     |  
+     |  IthVar(self, *args)
+     |      IthVar(DdManager self, int i) -> DdNode
+     |  
+     |  KillNode(self, *args)
+     |      KillNode(DdManager self, long num)
+     |  
+     |  MakeBddFromZddCover(self, *args)
+     |      MakeBddFromZddCover(DdManager self, DdNode node) -> DdNode
+     |  
+     |  MakeTreeNode(self, *args)
+     |      MakeTreeNode(DdManager self, unsigned int low, unsigned int size, unsigned int type) -> MtrNode
+     |  
+     |  MakeZddTreeNode(self, *args)
+     |      MakeZddTreeNode(DdManager self, unsigned int low, unsigned int size, unsigned int type) -> MtrNode
+     |  
+     |  NewApaNumber(self, *args)
+     |      NewApaNumber(DdManager self, int digits) -> DdApaNumber
+     |  
+     |  NewVar(self)
+     |      NewVar(DdManager self) -> DdNode
+     |  
+     |  NewVarAtLevel(self, *args)
+     |      NewVarAtLevel(DdManager self, int level) -> DdNode
+     |  
+     |  One(self)
+     |      One(DdManager self) -> DdNode
+     |  
+     |  OutOfMem(self, *args)
+     |      OutOfMem(DdManager self, long size)
+     |  
+     |  Prime(self, *args)
+     |      Prime(DdManager self, unsigned int p) -> unsigned int
+     |  
+     |  PrintCover(self, *args)
+     |      PrintCover(DdManager self, DdNode l, DdNode u) -> int
+     |  
+     |  PrintInfo(self, *args)
+     |      PrintInfo(DdManager self, FILE * fp) -> int
+     |  
+     |  PrintLinear(self)
+     |      PrintLinear(DdManager self) -> int
+     |  
+     |  PrintStdOut(self)
+     |      PrintStdOut(DdManager self) -> int
+     |  
+     |  PrintVersion(self, *args)
+     |      PrintVersion(DdManager self, FILE * fp)
+     |  
+     |  Random(self)
+     |      Random(DdManager self) -> long
+     |  
+     |  ReadArcviolation(self)
+     |      ReadArcviolation(DdManager self) -> int
+     |  
+     |  ReadBackground(self)
+     |      ReadBackground(DdManager self) -> DdNode
+     |  
+     |  ReadCacheHits(self)
+     |      ReadCacheHits(DdManager self) -> double
+     |  
+     |  ReadCacheLookUps(self)
+     |      ReadCacheLookUps(DdManager self) -> double
+     |  
+     |  ReadCacheSlots(self)
+     |      ReadCacheSlots(DdManager self) -> unsigned int
+     |  
+     |  ReadCacheUsedSlots(self)
+     |      ReadCacheUsedSlots(DdManager self) -> double
+     |  
+     |  ReadDead(self)
+     |      ReadDead(DdManager self) -> unsigned int
+     |  
+     |  ReadEpsilon(self)
+     |      ReadEpsilon(DdManager self) -> CUDD_VALUE_TYPE
+     |  
+     |  ReadErrorCode(self)
+     |      ReadErrorCode(DdManager self) -> Cudd_ErrorType
+     |  
+     |  ReadGarbageCollectionTime(self)
+     |      ReadGarbageCollectionTime(DdManager self) -> long
+     |  
+     |  ReadGarbageCollections(self)
+     |      ReadGarbageCollections(DdManager self) -> int
+     |  
+     |  ReadGroupcheck(self)
+     |      ReadGroupcheck(DdManager self) -> Cudd_AggregationType
+     |  
+     |  ReadIndex(self, *args)
+     |      ReadIndex(DdManager self, int i) -> int
+     |  
+     |  ReadInvPerm(self, *args)
+     |      ReadInvPerm(DdManager self, int i) -> int
+     |  
+     |  ReadInvPermZdd(self, *args)
+     |      ReadInvPermZdd(DdManager self, int i) -> int
+     |  
+     |  ReadKeys(self)
+     |      ReadKeys(DdManager self) -> unsigned int
+     |  
+     |  ReadLinear(self, *args)
+     |      ReadLinear(DdManager self, int x, int y) -> int
+     |  
+     |  ReadLogicZero(self)
+     |      ReadLogicZero(DdManager self) -> DdNode
+     |  
+     |  ReadLooseUpTo(self)
+     |      ReadLooseUpTo(DdManager self) -> unsigned int
+     |  
+     |  ReadMaxCache(self)
+     |      ReadMaxCache(DdManager self) -> unsigned int
+     |  
+     |  ReadMaxCacheHard(self)
+     |      ReadMaxCacheHard(DdManager self) -> unsigned int
+     |  
+     |  ReadMaxGrowth(self)
+     |      ReadMaxGrowth(DdManager self) -> double
+     |  
+     |  ReadMaxGrowthAlternate(self)
+     |      ReadMaxGrowthAlternate(DdManager self) -> double
+     |  
+     |  ReadMaxLive(self)
+     |      ReadMaxLive(DdManager self) -> unsigned int
+     |  
+     |  ReadMaxMemory(self)
+     |      ReadMaxMemory(DdManager self) -> long
+     |  
+     |  ReadMemoryInUse(self)
+     |      ReadMemoryInUse(DdManager self) -> long
+     |  
+     |  ReadMinDead(self)
+     |      ReadMinDead(DdManager self) -> unsigned int
+     |  
+     |  ReadMinHit(self)
+     |      ReadMinHit(DdManager self) -> unsigned int
+     |  
+     |  ReadMinusInfinity(self)
+     |      ReadMinusInfinity(DdManager self) -> DdNode
+     |  
+
+     |  ReadNextReordering(self)
+     |      ReadNextReordering(DdManager self) -> unsigned int
+     |  
+     |  ReadNodeCount(self)
+     |      ReadNodeCount(DdManager self) -> long
+     |  
+     |  ReadNodesDropped(self)
+     |      ReadNodesDropped(DdManager self) -> double
+     |  
+     |  ReadNodesFreed(self)
+     |      ReadNodesFreed(DdManager self) -> double
+     |  
+     |  ReadNumberXovers(self)
+     |      ReadNumberXovers(DdManager self) -> int
+     |  
+     |  ReadOne(self)
+     |      ReadOne(DdManager self) -> DdNode
+     |  
+     |  ReadPairIndex(self, *args)
+     |      ReadPairIndex(DdManager self, int index) -> int
+     |  
+     |  ReadPeakLiveNodeCount(self)
+     |      ReadPeakLiveNodeCount(DdManager self) -> int
+     |  
+     |  ReadPeakNodeCount(self)
+     |      ReadPeakNodeCount(DdManager self) -> long
+     |  
+     |  ReadPerm(self, *args)
+     |      ReadPerm(DdManager self, int i) -> int
+     |  
+     |  ReadPermZdd(self, *args)
+     |      ReadPermZdd(DdManager self, int i) -> int
+     |  
+     |  ReadPlusInfinity(self)
+     |      ReadPlusInfinity(DdManager self) -> DdNode
+     |  
+     |  ReadPopulationSize(self)
+     |      ReadPopulationSize(DdManager self) -> int
+     |  
+     |  ReadRecomb(self)
+     |      ReadRecomb(DdManager self) -> int
+     |  
+     |  ReadRecursiveCalls(self)
+     |      ReadRecursiveCalls(DdManager self) -> double
+     |  
+     |  ReadReorderingCycle(self)
+     |      ReadReorderingCycle(DdManager self) -> int
+     |  
+     |  ReadReorderingTime(self)
+     |      ReadReorderingTime(DdManager self) -> long
+     |  
+     |  ReadReorderings(self)
+     |      ReadReorderings(DdManager self) -> int
+     |  
+     |  ReadSiftMaxSwap(self)
+     |      ReadSiftMaxSwap(DdManager self) -> int
+     |  
+     |  ReadSiftMaxVar(self)
+     |      ReadSiftMaxVar(DdManager self) -> int
+     |  
+     |  ReadSize(self)
+     |      ReadSize(DdManager self) -> int
+     |  
+     |  ReadSlots(self)
+     |      ReadSlots(DdManager self) -> unsigned int
+     |  
+     |  ReadStderr(self)
+     |      ReadStderr(DdManager self) -> FILE *
+     |  
+     |  ReadStdout(self)
+     |      ReadStdout(DdManager self) -> FILE *
+     |  
+     |  ReadSwapSteps(self)
+     |      ReadSwapSteps(DdManager self) -> double
+     |  
+     |  ReadSymmviolation(self)
+     |      ReadSymmviolation(DdManager self) -> int
+     |  
+     |  ReadTree(self)
+     |      ReadTree(DdManager self) -> MtrNode
+     |  
+     |  ReadUniqueLinks(self)
+     |      ReadUniqueLinks(DdManager self) -> double
+     |  
+     |  ReadUniqueLookUps(self)
+     |      ReadUniqueLookUps(DdManager self) -> double
+     |  
+     |  ReadUsedSlots(self)
+     |      ReadUsedSlots(DdManager self) -> double
+     |  
+     |  ReadVars(self, *args)
+     |      ReadVars(DdManager self, int i) -> DdNode
+     |  
+     |  ReadZddOne(self, *args)
+     |      ReadZddOne(DdManager self, int i) -> DdNode
+     |  
+     |  ReadZddSize(self)
+     |      ReadZddSize(DdManager self) -> int
+     |  
+     |  ReadZddTree(self)
+     |      ReadZddTree(DdManager self) -> MtrNode
+     |  
+     |  ReadZero(self)
+     |      ReadZero(DdManager self) -> DdNode
+     |  
+     |  RealignDisable(self)
+     |      RealignDisable(DdManager self)
+     |  
+     |  RealignEnable(self)
+     |      RealignEnable(DdManager self)
+     |  
+     |  RealignmentEnabled(self)
+     |      RealignmentEnabled(DdManager self) -> int
+     |  
+     |  ReduceHeap(self, *args)
+     |      ReduceHeap(DdManager self, int heuristic, int minsize) -> int
+     |  
+     |  ReorderingReporting(self)
+     |      ReorderingReporting(DdManager self) -> int
+     |  
+     |  ReorderingStatus(self)
+     |      ReorderingStatus(DdManager self) -> int
+     |  
+     |  ReorderingStatusZdd(self)
+     |      ReorderingStatusZdd(DdManager self) -> int
+     |  
+     |  ResetVarToBeGrouped(self, *args)
+     |      ResetVarToBeGrouped(DdManager self, int index) -> int
+     |  
+     |  SetArcviolation(self, *args)
+     |      SetArcviolation(DdManager self, int arcviolation)
+     |  
+     |  SetDefault(self)
+     |      SetDefault(DdManager self)
+     |  
+     |  SetEpsilon(self, *args)
+     |      SetEpsilon(DdManager self, CUDD_VALUE_TYPE ep)
+     |  
+     |  SetGroupcheck(self, *args)
+     |      SetGroupcheck(DdManager self, Cudd_AggregationType gc)
+     |  
+     |  SetLooseUpTo(self, *args)
+     |      SetLooseUpTo(DdManager self, unsigned int lut)
+     |  
+     |  SetMaxCacheHard(self, *args)
+     |      SetMaxCacheHard(DdManager self, unsigned int mc)
+     |  
+     |  SetMaxGrowth(self, *args)
+     |      SetMaxGrowth(DdManager self, double mg)
+     |  
+     |  SetMaxGrowthAlternate(self, *args)
+     |      SetMaxGrowthAlternate(DdManager self, double mg)
+     |  
+     |  SetMaxLive(self, *args)
+     |      SetMaxLive(DdManager self, unsigned int maxLive)
+     |  
+     |  SetMaxMemory(self, *args)
+     |      SetMaxMemory(DdManager self, long maxMemory)
+     |  
+     |  SetMinHit(self, *args)
+     |      SetMinHit(DdManager self, unsigned int hr)
+     |  
+     |  SetNextReordering(self, *args)
+     |      SetNextReordering(DdManager self, unsigned int next)
+     |  
+     |  SetNsVar(self, *args)
+     |      SetNsVar(DdManager self, int index) -> int
+     |  
+     |  SetNumberXovers(self, *args)
+     |      SetNumberXovers(DdManager self, int numberXovers)
+     |  
+     |  SetPairIndex(self, *args)
+     |      SetPairIndex(DdManager self, int index, int pairIndex) -> int
+     |  
+     |  SetPiVar(self, *args)
+     |      SetPiVar(DdManager self, int index) -> int
+     |  
+     |  SetPopulationSize(self, *args)
+     |      SetPopulationSize(DdManager self, int populationSize)
+     |  
+     |  SetPsVar(self, *args)
+     |      SetPsVar(DdManager self, int index) -> int
+     |  
+     |  SetRecomb(self, *args)
+     |      SetRecomb(DdManager self, int recomb)
+     |  
+     |  SetReorderingCycle(self, *args)
+     |      SetReorderingCycle(DdManager self, int cycle)
+     |  
+     |  SetSiftMaxSwap(self, *args)
+     |      SetSiftMaxSwap(DdManager self, int sms)
+     |  
+     |  SetSiftMaxVar(self, *args)
+     |      SetSiftMaxVar(DdManager self, int smv)
+     |  
+     |  SetStderr(self, *args)
+     |      SetStderr(DdManager self, FILE * fp)
+     |  
+     |  SetStdout(self, *args)
+     |      SetStdout(DdManager self, FILE * fp)
+     |  
+     |  SetSymmviolation(self, *args)
+     |      SetSymmviolation(DdManager self, int symmviolation)
+     |  
+     |  SetTree(self, *args)
+     |      SetTree(DdManager self, MtrNode tree)
+     |  
+     |  SetVarHardGroup(self, *args)
+     |      SetVarHardGroup(DdManager self, int index) -> int
+     |  
+     |  SetVarMap(self, *args)
+     |      SetVarMap(DdManager self, DdArray x, DdArray y, int n) -> int
+     |  
+     |  SetVarToBeGrouped(self, *args)
+     |      SetVarToBeGrouped(DdManager self, int index) -> int
+     |  
+     |  SetVarToBeUngrouped(self, *args)
+     |      SetVarToBeUngrouped(DdManager self, int index) -> int
+     |  
+     |  SetZddTree(self, *args)
+     |      SetZddTree(DdManager self, MtrNode tree)
+     |  
+     |  SharingSize(self, *args)
+     |      SharingSize(DdManager self, DdArray nodeArray, int n) -> int
+     |  
+     |  ShuffleHeap(self, *args)
+     |      ShuffleHeap(DdManager self, IntArray permutation) -> int
+     |  
+     |  Sort(self, *args)
+     |      Sort(DdManager self, DdNode leftnd, DdNode rightnd) -> int
+     |  
+     |  Srandom(self, *args)
+     |      Srandom(DdManager self, long seed)
+     |  
+     |  StateCube(self, *args)
+     |      StateCube(DdManager self, char * cube, int base, int offset, int scale) -> DdNode
+     |  
+     |  SymmProfile(self, *args)
+     |      SymmProfile(DdManager self, int lower, int upper)
+     |  
+     |  Text2Bin(self, *args)
+     |      Text2Bin(DdManager self, char * filein, char * fileout) -> int
+     |  
+     |  Transfer(self, *args)
+     |      Transfer(DdManager self, DdManager ddDestination, DdNode f) -> DdNode
+     |  
+     |  TurnOffCountDead(self)
+     |      TurnOffCountDead(DdManager self)
+     |  
+     |  TurnOnCountDead(self)
+     |      TurnOnCountDead(DdManager self)
+     |  
+     |  UnbindVar(self, *args)
+     |      UnbindVar(DdManager self, int index) -> int
+     |  
+     |  VarIsBound(self, *args)
+     |      VarIsBound(DdManager self, int index) -> int
+     |  
+     |  VectorSupportSize(self, *args)
+     |      VectorSupportSize(DdManager self, DdArray F, int n) -> int
+     |  
+     |  Xeqy(self, *args)
+     |      Xeqy(DdManager self, int N, DdArray x, DdArray y) -> DdNode
+     |  
+     |  Xgty(self, *args)
+     |      Xgty(DdManager self, int N, DdArray z, DdArray x, DdArray y) -> DdNode
+     |  
+     |  Zero(self)
+     |      Zero(DdManager self) -> DdNode
+     |  
+     |  __del__ lambda self
+     |  
+     |  __getattr__ lambda self, name
+     |  
+     |  __getitem__(self, *args)
+     |      __getitem__(DdManager self, int i) -> DdNode
+     |  
+     |  __init__(self, *args)
+     |      __init__(DdManager self, unsigned int numVars=0, unsigned int numVarsZ=0, unsigned int numSlots=CUDD_UNIQUE_SLOTS, 
+     |          unsigned int cacheSize=CUDD_CACHE_SLOTS, unsigned long maxMemory=0) -> DdManager
+     |      __init__(DdManager self, unsigned int numVars=0, unsigned int numVarsZ=0, unsigned int numSlots=CUDD_UNIQUE_SLOTS, 
+     |          unsigned int cacheSize=CUDD_CACHE_SLOTS) -> DdManager
+     |      __init__(DdManager self, unsigned int numVars=0, unsigned int numVarsZ=0, unsigned int numSlots=CUDD_UNIQUE_SLOTS) -> DdManager
+     |      __init__(DdManager self, unsigned int numVars=0, unsigned int numVarsZ=0) -> DdManager
+     |      __init__(DdManager self, unsigned int numVars=0) -> DdManager
+     |      __init__(DdManager self) -> DdManager
+     |  
+     |  __len__(self)
+     |      __len__(DdManager self) -> int
+     |  
+     |  __repr__ = _swig_repr(self)
+     |  
+     |  __setattr__ lambda self, name, value
+     |  
+     |  addAgreement(self, *args)
+     |      addAgreement(DdManager self, DdArray f, DdArray g) -> DdNode
+     |  
+     |  addBddInterval(self, *args)
+     |      addBddInterval(DdManager self, DdNode f, CUDD_VALUE_TYPE lower, CUDD_VALUE_TYPE upper) -> DdNode
+     |  
+     |  addBddIthBit(self, *args)
+     |      addBddIthBit(DdManager self, DdNode f, int bit) -> DdNode
+     |  
+     |  addBddPattern(self, *args)
+     |      addBddPattern(DdManager self, DdNode f) -> DdNode
+     |  
+     |  addBddStrictThreshold(self, *args)
+     |      addBddStrictThreshold(DdManager self, DdNode f, CUDD_VALUE_TYPE value) -> DdNode
+     |  
+     |  addBddThreshold(self, *args)
+     |      addBddThreshold(DdManager self, DdNode f, CUDD_VALUE_TYPE value) -> DdNode
+     |  
+     |  addComputeCube(self, *args)
+     |      addComputeCube(DdManager self, DdArray vars, IntArray phase, int n) -> DdNode
+     |  
+     |  addConst(self, *args)
+     |      addConst(DdManager self, CUDD_VALUE_TYPE c) -> DdNode
+     |  
+     |  addDiff(self, *args)
+     |      addDiff(DdManager self, DdArray f, DdArray g) -> DdNode
+     |  
+     |  addDivide(self, *args)
+     |      addDivide(DdManager self, DdArray f, DdArray g) -> DdNode
+     |  
+     |  addHamming(self, *args)
+     |      addHamming(DdManager self, DdArray xVars, DdArray yVars, int nVars) -> DdNode
+     |  
+     |  addIthVar(self, *args)
+     |      addIthVar(DdManager self, int i) -> DdNode
+     |  
+     |  addMaximum(self, *args)
+     |      addMaximum(DdManager self, DdArray f, DdArray g) -> DdNode
+     |  
+     |  addMinimum(self, *args)
+     |      addMinimum(DdManager self, DdArray f, DdArray g) -> DdNode
+     |  
+     |  addMinus(self, *args)
+     |      addMinus(DdManager self, DdArray f, DdArray g) -> DdNode
+     |  
+     |  addNand(self, *args)
+     |      addNand(DdManager self, DdArray f, DdArray g) -> DdNode
+     |  
+     |  addNewVar(self)
+     |      addNewVar(DdManager self) -> DdNode
+     |  
+     |  addNewVarAtLevel(self, *args)
+     |      addNewVarAtLevel(DdManager self, int level) -> DdNode
+     |  
+     |  addNor(self, *args)
+     |      addNor(DdManager self, DdArray f, DdArray g) -> DdNode
+     |  
+     |  addOneZeroMaximum(self, *args)
+     |      addOneZeroMaximum(DdManager self, DdArray f, DdArray g) -> DdNode
+     |  
+     |  addOr(self, *args)
+     |      addOr(DdManager self, DdArray f, DdArray g) -> DdNode
+     |  
+     |  addPlus(self, *args)
+     |      addPlus(DdManager self, DdArray f, DdArray g) -> DdNode
+     |  
+     |  addResidue(self, *args)
+     |      addResidue(DdManager self, int n, int m, int options, int top) -> DdNode
+     |  
+     |  addSetNZ(self, *args)
+     |      addSetNZ(DdManager self, DdArray f, DdArray g) -> DdNode
+     |  
+     |  addThreshold(self, *args)
+     |      addThreshold(DdManager self, DdArray f, DdArray g) -> DdNode
+     |  
+     |  addTimes(self, *args)
+     |      addTimes(DdManager self, DdArray f, DdArray g) -> DdNode
+     |  
+     |  addWalsh(self, *args)
+     |      addWalsh(DdManager self, DdArray x, DdArray y, int n) -> DdNode
+     |  
+     |  addXeqy(self, *args)
+     |      addXeqy(DdManager self, int N, DdArray x, DdArray y) -> DdNode
+     |  
+     |  addXnor(self, *args)
+     |      addXnor(DdManager self, DdArray f, DdArray g) -> DdNode
+     |  
+     |  addXor(self, *args)
+     |      addXor(DdManager self, DdArray f, DdArray g) -> DdNode
+     |  
+     |  zddDumpDot(self, *args)
+     |      zddDumpDot(DdManager self, int n, DdArray f, char ** inames, char ** onames, FILE * fp) -> int
+     |  
+     |  zddIthVar(self, *args)
+     |      zddIthVar(DdManager self, int i) -> DdNode
+     |  
+     |  zddPortFromBdd(self, *args)
+     |      zddPortFromBdd(DdManager self, DdNode B) -> DdNode
+     |  
+     |  zddPortToBdd(self, *args)
+     |      zddPortToBdd(DdManager self, DdNode f) -> DdNode
+     |  
+     |  zddPrintSubtable(self)
+     |      zddPrintSubtable(DdManager self)
+     |  
+     |  zddReadNodeCount(self)
+     |      zddReadNodeCount(DdManager self) -> long
+     |  
+     |  zddRealignDisable(self)
+     |      zddRealignDisable(DdManager self)
+     |  
+     |  zddRealignEnable(self)
+     |      zddRealignEnable(DdManager self)
+     |  
+     |  zddRealignmentEnabled(self)
+     |      zddRealignmentEnabled(DdManager self) -> int
+     |  
+     |  zddReduceHeap(self, *args)
+     |      zddReduceHeap(DdManager self, int heuristic, int minsize) -> int
+     |  
+     |  zddShuffleHeap(self, *args)
+     |      zddShuffleHeap(DdManager self, IntArray permutation) -> int
+     |  
+     |  zddSymmProfile(self, *args)
+     |      zddSymmProfile(DdManager self, int lower, int upper)
+     |  
+     |  zddVarsFromBddVars(self, *args)
+     |      zddVarsFromBddVars(DdManager self, int multiplicity) -> int
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |  
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |  
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |  
+     |  __swig_destroy__ = <built-in function delete_DdManager>
+     |      delete_DdManager(DdManager self)
+     |  
+     |  __swig_getmethods__ = {}
+     |  
+     |  __swig_setmethods__ = {}
+    
+    class DdNode(__builtin__.object)
+     |  This class wraps around the basic DdNode. The methods defined by this class take the default manager as their DdManager option (if needed) and provide themselves as the first DdNode option that those functions require, as indicated by the self argument. These functions may be found in ddnode.i.
+     |  
+     |  Methods defined here:
+     |  
+
+
+    
+    class DdNode(__builtin__.object)
+     |  This class wraps around the basic DdNode. The methods defined by this class take the default manager as their DdManager option (if needed) and provide themselves as the first DdNode option that those functions require, as indicated by the self argument. These functions may be found in ddnode.i.
+     |  
+     |  Methods defined here:
+     |  
+     |  AdjPermuteX(self, *args)
+     |      AdjPermuteX(DdNode self, DdArray x, int n) -> DdNode
+     |  
+     |  And(self, *args)
+     |      And(DdNode self, DdNode g) -> DdNode
+     |  
+     |  AndAbstract(self, *args)
+     |      AndAbstract(DdNode self, DdNode g, DdNode cube) -> DdNode
+     |  
+     |  AndAbstractLimit(self, *args)
+     |      AndAbstractLimit(DdNode self, DdNode g, DdNode cube, unsigned int limit) -> DdNode
+     |  
+     |  AndLimit(self, *args)
+     |      AndLimit(DdNode self, DdNode g, unsigned int limit) -> DdNode
+     |  
+     |  ApaCountMinterm(self, *args)
+     |      ApaCountMinterm(DdNode self, int nvars, IntArray digits) -> DdApaNumber
+     |  
+     |  ApaPrintDensity(self, *args)
+     |      ApaPrintDensity(DdNode self, FILE * fp, int nvars) -> int
+     |  
+     |  ApaPrintMinterm(self, *args)
+     |      ApaPrintMinterm(DdNode self, FILE * fp, int nvars) -> int
+     |  
+     |  ApaPrintMintermExp(self, *args)
+     |      ApaPrintMintermExp(DdNode self, FILE * fp, int nvars, int precision) -> int
+     |  
+     |  ApproxConjDecomp(self)
+     |      ApproxConjDecomp(DdNode self) -> int
+     |  
+     |  ApproxDisjDecomp(self)
+     |      ApproxDisjDecomp(DdNode self) -> int
+     |  
+     |  BddStore(self, *args)
+     |      BddStore(DdNode self, char * ddname, char ** varnames, IntArray auxids, int mode, int varinfo, char * fname, 
+     |          FILE * fp) -> int
+     |  
+     |  BddToCubeArray(self, *args)
+     |      BddToCubeArray(DdNode self, IntArray y) -> int
+     |  
+     |  BiasedOverApprox(self, *args)
+     |      BiasedOverApprox(DdNode self, DdNode b, int numVars, int threshold, double quality1, double quality0) -> DdNode
+     |  
+     |  BiasedUnderApprox(self, *args)
+     |      BiasedUnderApprox(DdNode self, DdNode b, int numVars, int threshold, double quality1, double quality0) -> DdNode
+     |  
+     |  BooleanDiff(self, *args)
+     |      BooleanDiff(DdNode self, int x) -> DdNode
+     |  
+     |  CProjection(self, *args)
+     |      CProjection(DdNode self, DdNode Y) -> DdNode
+     |  
+     |  CharToVect(self)
+     |      CharToVect(DdNode self) -> DdArray
+     |  
+     |  ClippingAnd(self, *args)
+     |      ClippingAnd(DdNode self, DdNode g, int maxDepth, int direction) -> DdNode
+     |  
+     |  ClippingAndAbstract(self, *args)
+     |      ClippingAndAbstract(DdNode self, DdNode g, DdNode cube, int maxDepth, int direction) -> DdNode
+     |  
+     |  ClosestCube(self, *args)
+     |      ClosestCube(DdNode self, DdNode g) -> DdNode
+     |  
+     |  CofMinterm(self)
+     |      CofMinterm(DdNode self) -> DoubleArray
+     |  
+     |  Cofactor(self, *args)
+     |      Cofactor(DdNode self, DdNode g) -> DdNode
+     |  
+     |  Complement(self)
+     |      Complement(DdNode self) -> DdNode
+     |  
+     |  Compose(self, *args)
+     |      Compose(DdNode self, DdNode g, int v) -> DdNode
+     |  
+     |  Constrain(self, *args)
+     |      Constrain(DdNode self, DdNode c) -> DdNode
+     |  
+     |  ConstrainDecomp(self)
+     |      ConstrainDecomp(DdNode self) -> DdArray
+     |  
+     |  Correlation(self, *args)
+     |      Correlation(DdNode self, DdNode g) -> double
+     |  
+     |  CorrelationWeights(self, *args)
+     |      CorrelationWeights(DdNode self, DdNode g, DoubleArray prob) -> double
+     |  
+     |  CountLeaves(self)
+     |      CountLeaves(DdNode self) -> int
+     |  
+     |  CountMinterm(self, *args)
+     |      CountMinterm(DdNode self, int nvars) -> double
+     |  
+     |  CountPath(self)
+     |      CountPath(DdNode self) -> double
+     |  
+     |  CountPathsToNonZero(self)
+     |      CountPathsToNonZero(DdNode self) -> double
+     |  
+     |  DagSize(self)
+     |      DagSize(DdNode self) -> int
+     |  
+     |  Decreasing(self, *args)
+     |      Decreasing(DdNode self, int i) -> DdNode
+     |  
+     |  Density(self, *args)
+     |      Density(DdNode self, int nvars) -> double
+     |  
+     |  DumpBlif(self)
+     |      DumpBlif(DdNode self) -> int
+     |  
+     |  DumpDot(self)
+     |      DumpDot(DdNode self) -> int
+     |  
+     |  E(self)
+     |      E(DdNode self) -> DdNode
+     |  
+     |  Empty(self)
+     |      Empty(DdNode self) -> bool
+     |  
+     |  EpdCountMinterm(self, *args)
+     |      EpdCountMinterm(DdNode self, int nvars, EpDouble epd) -> int
+     |  
+     |  EqualSupNorm(self, *args)
+     |      EqualSupNorm(DdNode self, DdNode g, CUDD_VALUE_TYPE tolerance, int pr) -> int
+     |  
+     |  EquivDC(self, *args)
+     |      EquivDC(DdNode self, DdNode G, DdNode D) -> int
+     |  
+     |  EstimateCofactor(self, *args)
+     |      EstimateCofactor(DdNode self, int i, int phase) -> int
+     |  
+     |  EstimateCofactorSimple(self, *args)
+     |      EstimateCofactorSimple(DdNode self, int i) -> int
+     |  
+     |  Eval(self, *args)
+     |      Eval(DdNode self, IntArray inputs) -> DdNode
+     |  
+     |  ExistAbstract(self, *args)
+     |      ExistAbstract(DdNode self, DdNode cube) -> DdNode
+     |  
+     |  FIntersect(self, *args)
+     |      FIntersect(DdNode self, DdNode g) -> int
+     |  
+     |  FindEssential(self)
+     |      FindEssential(DdNode self) -> DdNode
+     |  
+     |  FindTwoLiteralClauses(self)
+     |      FindTwoLiteralClauses(DdNode self) -> DdTlcInfo
+     |  
+     |  FirstCube(self, *args)
+     |      FirstCube(DdNode self, DdGen gen) -> int
+     |  
+     |  FirstNode(self, *args)
+     |      FirstNode(DdNode self, DdGen gen) -> int
+     |  
+     |  GenConjDecomp(self)
+     |      GenConjDecomp(DdNode self) -> int
+     |  
+     |  GenDisjDecomp(self)
+     |      GenDisjDecomp(DdNode self) -> int
+     |  
+     |  Increasing(self, *args)
+     |      Increasing(DdNode self, int i) -> DdNode
+     |  
+     |  Intersect(self, *args)
+     |      Intersect(DdNode self, DdNode g) -> DdNode
+     |  
+     |  IsComplement(self)
+     |      IsComplement(DdNode self) -> int
+     |  
+     |  IsConstant(self)
+     |      IsConstant(DdNode self) -> int
+     |  
+     |  IsNonConstant(self)
+     |      IsNonConstant(DdNode self) -> int
+     |  
+     |  IsVarEssential(self, *args)
+     |      IsVarEssential(DdNode self, int id, int phase) -> int
+     |  
+     |  Isop(self, *args)
+     |      Isop(DdNode self, DdNode U) -> DdNode
+     |  
+     |  Ite(self, *args)
+     |      Ite(DdNode self, DdNode g, DdNode h) -> DdNode
+     |  
+     |  IteConstant(self, *args)
+     |      IteConstant(DdNode self, DdNode g, DdNode h) -> DdNode
+     |  
+     |  IterConjDecomp(self)
+     |      IterConjDecomp(DdNode self) -> int
+     |  
+     |  IterDisjDecomp(self)
+     |      IterDisjDecomp(DdNode self) -> int
+     |  
+     |  LICompaction(self, *args)
+     |      LICompaction(DdNode self, DdNode c) -> DdNode
+     |  
+     |  LargestCube(self, *args)
+     |      LargestCube(DdNode self, IntArray length) -> DdNode
+     |  
+     |  Leq(self, *args)
+     |      Leq(DdNode self, DdNode g) -> bool
+     |  
+     |  LeqUnless(self, *args)
+     |      LeqUnless(DdNode self, DdNode g, DdNode D) -> int
+     |  
+     |  LiteralSetIntersection(self, *args)
+     |      LiteralSetIntersection(DdNode self, DdNode g) -> DdNode
+     |  
+     |  MakePrime(self, *args)
+     |      MakePrime(DdNode self, DdNode f) -> DdNode
+     |  
+     |  MinHammingDist(self, *args)
+     |      MinHammingDist(DdNode self, IntArray minterm, int upperBound) -> int
+     |  
+     |  Minimize(self, *args)
+     |      Minimize(DdNode self, DdNode c) -> DdNode
+     |  
+     |  NPAnd(self, *args)
+     |      NPAnd(DdNode self, DdNode c) -> DdNode
+     |  
+     |  Nand(self, *args)
+     |      Nand(DdNode self, DdNode g) -> DdNode
+     |  
+     |  NextCube(self, *args)
+     |      NextCube(DdNode self, DdGen gen) -> int
+     |  
+     |  NextNode(self, *args)
+     |      NextNode(DdNode self, DdGen gen) -> int
+     |  
+     |  NodeReadIndex(self)
+     |      NodeReadIndex(DdNode self) -> int
+     |  
+     |  Nor(self, *args)
+     |      Nor(DdNode self, DdNode g) -> DdNode
+     |  
+     |  Not(self)
+     |      Not(DdNode self) -> DdNode
+     |  
+     |  NotCond(self, *args)
+     |      NotCond(DdNode self, int c) -> DdNode
+     |  
+     |  Or(self, *args)
+     |      Or(DdNode self, DdNode g) -> DdNode
+     |  
+     |  OverApprox(self, *args)
+     |      OverApprox(DdNode self, int numVars, int threshold, int safe, double quality) -> DdNode
+     |  
+     |  Permute(self, *args)
+     |      Permute(DdNode self, IntArray permut) -> DdNode
+     |  
+     |  PickArbitraryMinterms(self, *args)
+     |      PickArbitraryMinterms(DdNode self, DdArray vars, int n, int k) -> DdArray
+     |  
+     |  PickOneCube(self, *args)
+     |      PickOneCube(DdNode self, char * string) -> int
+     |  
+     |  PickOneMinterm(self, *args)
+     |      PickOneMinterm(DdNode self, DdArray vars, int n) -> DdNode
+     |  
+     |  PrintDebug(self, *args)
+     |      PrintDebug(DdNode self, int n, int pr) -> int
+     |  
+     |  PrintMinterm(self)
+     |      PrintMinterm(DdNode self) -> int
+     |  
+     |  ReadIndex(self, *args)
+     |      ReadIndex(DdNode self, int index) -> int
+     |  
+     |  Regular(self)
+     |      Regular(DdNode self) -> DdNode
+     |  
+     |  RemapOverApprox(self, *args)
+     |      RemapOverApprox(DdNode self, int numVars, int threshold, double quality) -> DdNode
+     |  
+     |  RemapUnderApprox(self, *args)
+     |      RemapUnderApprox(DdNode self, int numVars, int threshold, double quality) -> DdNode
+     |  
+     |  Restrict(self, *args)
+     |      Restrict(DdNode self, DdNode c) -> DdNode
+     |  
+     |  SetBackground(self)
+     |      SetBackground(DdNode self)
+     |  
+     |  ShortestLength(self, *args)
+     |      ShortestLength(DdNode self, IntArray weight) -> int
+     |  
+     |  ShortestPath(self, *args)
+     |      ShortestPath(DdNode self, IntArray weight, IntArray support, IntArray length) -> DdNode
+     |  
+     |  Show(self, *args)
+     |      Show(DdNode self, char * name, int op1, int op2)
+     |  
+     |  SizeOf(self)
+     |      SizeOf(DdNode self) -> int
+     |  
+     |  SplitSet(self, *args)
+     |      SplitSet(DdNode self, DdArray xVars, int n, double m) -> DdNode
+     |  
+     |  Squeeze(self, *args)
+     |      Squeeze(DdNode self, DdNode u) -> DdNode
+     |  
+     |  SubsetCompress(self, *args)
+     |      SubsetCompress(DdNode self, int nvars, int threshold) -> DdNode
+     |  
+     |  SubsetHeavyBranch(self, *args)
+     |      SubsetHeavyBranch(DdNode self, int numVars, int threshold) -> DdNode
+     |  
+     |  SubsetShortPaths(self, *args)
+     |      SubsetShortPaths(DdNode self, int numVars, int threshold, int hardlimit) -> DdNode
+     |  
+     |  SupersetCompress(self, *args)
+     |      SupersetCompress(DdNode self, int nvars, int threshold) -> DdNode
+     |  
+     |  SupersetHeavyBranch(self, *args)
+     |      SupersetHeavyBranch(DdNode self, int numVars, int threshold) -> DdNode
+     |  
+     |  SupersetShortPaths(self, *args)
+     |      SupersetShortPaths(DdNode self, int numVars, int threshold, int hardlimit) -> DdNode
+     |  
+     |  Support(self)
+     |      Support(DdNode self) -> DdNode
+     |  
+     |  SupportIndex(self)
+     |      SupportIndex(DdNode self) -> int
+     |  
+     |  SupportSize(self)
+     |      SupportSize(DdNode self) -> int
+     |  
+     |  SwapVariables(self, *args)
+     |      SwapVariables(DdNode self, DdArray x, DdArray y, int n) -> DdNode
+     |  
+     |  T(self)
+     |      T(DdNode self) -> DdNode
+     |  
+     |  UnderApprox(self, *args)
+     |      UnderApprox(DdNode self, int numVars, int threshold, int safe, double quality) -> DdNode
+     |  
+     |  UnivAbstract(self, *args)
+     |      UnivAbstract(DdNode self, DdNode cube) -> DdNode
+     |  
+     |  V(self)
+     |      V(DdNode self) -> double
+     |  
+     |  VarConjDecomp(self)
+     |      VarConjDecomp(DdNode self) -> int
+     |  
+     |  VarDisjDecomp(self)
+     |      VarDisjDecomp(DdNode self) -> int
+     |  
+     |  VarIsDependent(self, *args)
+     |      VarIsDependent(DdNode self, DdNode var) -> int
+     |  
+     |  VarMap(self)
+     |      VarMap(DdNode self) -> DdNode
+     |  
+     |  Vector(self)
+     |      Vector(DdNode self) -> DdArray
+     |  
+     |  VectorCompose(self, *args)
+     |      VectorCompose(DdNode self, DdArray vector) -> DdNode
+     |  
+     |  VerifySol(self, *args)
+     |      VerifySol(DdNode self, DdArray G, IntArray yIndex, int n) -> DdNode
+:
+|      VarMap(DdNode self) -> DdNode
+     |  
+     |  Vector(self)
+     |      Vector(DdNode self) -> DdArray
+     |  
+     |  VectorCompose(self, *args)
+     |      VectorCompose(DdNode self, DdArray vector) -> DdNode
+     |  
+     |  VerifySol(self, *args)
+     |      VerifySol(DdNode self, DdArray G, IntArray yIndex, int n) -> DdNode
+     |  
+     |  Xnor(self, *args)
+     |      Xnor(DdNode self, DdNode g) -> DdNode
+     |  
+     |  Xor(self, *args)
+     |      Xor(DdNode self, DdNode g) -> DdNode
+     |  
+     |  XorExistAbstract(self, *args)
+     |      XorExistAbstract(DdNode self, DdNode g, DdNode cube) -> DdNode
+     |  
+     |  __add__(self, *args)
+     |      __add__(DdNode self, DdNode other) -> DdNode
+     |  
+     |  __and__(self, *args)
+     |      __and__(DdNode self, DdNode other) -> DdNode
+     |  
+     |  __cmp__(self, *args)
+     |      __cmp__(DdNode self, DdNode other) -> bool
+     |  
+     |  __deepcopy__(self, memo)
+     |  
+     |  __del__ lambda self
+     |  
+     |  __eq__(self, *args)
+     |      __eq__(DdNode self, DdNode other) -> bool
+     |  
+     |  __ge__(self, *args)
+     |      __ge__(DdNode self, DdNode other) -> bool
+     |  
+     |  __getattr__ lambda self, name
+     |  
+     |  __gt__(self, *args)
+     |      __gt__(DdNode self, DdNode other) -> bool
+     |  
+     |  __hash__(self)
+     |      __hash__(DdNode self) -> int
+     |  
+     |  __init__(self)
+     |      __init__(DdNode self) -> DdNode
+     |  
+     |  __int__(self)
+     |      __int__(DdNode self) -> int
+     |  
+     |  __invert__(self)
+     |      __invert__(DdNode self) -> DdNode
+     |  
+     |  __iter__(self)
+     |  
+     |  __le__(self, *args)
+     |      __le__(DdNode self, DdNode other) -> bool
+     |  
+     |  __len__(self)
+     |      __len__(DdNode self) -> int
+     |  
+     |  __lt__(self, *args)
+     |      __lt__(DdNode self, DdNode other) -> bool
+     |  
+     |  __ne__(self, *args)
+     |      __ne__(DdNode self, DdNode other) -> bool
+     |  
+     |  __nonzero__(self)
+     |      __nonzero__(DdNode self) -> bool
+     |  
+     |  __or__(self, *args)
+     |      __or__(DdNode self, DdNode other) -> DdNode
+     |  
+     |  __repr__ = _swig_repr(self)
+     |  
+     |  __rshift__(self, *args)
+     |      __rshift__(DdNode self, DdNode other) -> DdNode
+     |  
+     |  __setattr__ lambda self, name, value
+     |  
+     |  __sub__(self, *args)
+     |      __sub__(DdNode self, DdNode other) -> DdNode
+     |  
+     |  __xor__(self, *args)
+     |      __xor__(DdNode self, DdNode other) -> DdNode
+     |  
+     |  addCmpl(self)
+     |      addCmpl(DdNode self) -> DdNode
+     |  
+     |  addCompose(self, *args)
+     |      addCompose(DdNode self, DdNode g, int v) -> DdNode
+     |  
+     |  addConstrain(self, *args)
+     |      addConstrain(DdNode self, DdNode c) -> DdNode
+     |  
+     |  addEvalConst(self, *args)
+     |      addEvalConst(DdNode self, DdNode g) -> DdNode
+     |  
+     |  addExistAbstract(self, *args)
+     |      addExistAbstract(DdNode self, DdNode cube) -> DdNode
+     |  
+     |  addFindMax(self)
+     |      addFindMax(DdNode self) -> DdNode
+     |  
+     |  addFindMin(self)
+     |      addFindMin(DdNode self) -> DdNode
+     |  
+     |  addIte(self, *args)
+     |      addIte(DdNode self, DdNode g, DdNode h) -> DdNode
+     |  
+     |  addIteConstant(self, *args)
+     |      addIteConstant(DdNode self, DdNode g, DdNode h) -> DdNode
+     |  
+     |  addIthBit(self, *args)
+     |      addIthBit(DdNode self, int bit) -> DdNode
+     |  
+     |  addLeq(self, *args)
+     |      addLeq(DdNode self, DdNode g) -> int
+     |  
+     |  addMatrixMultiply(self, *args)
+     |      addMatrixMultiply(DdNode self, DdNode B, DdArray z, int nz) -> DdNode
+     |  
+     |  addNegate(self)
+     |      addNegate(DdNode self) -> DdNode
+     |  
+     |  addNonSimCompose(self, *args)
+     |      addNonSimCompose(DdNode self, DdArray vector) -> DdNode
+     |  
+     |  addOrAbstract(self, *args)
+     |      addOrAbstract(DdNode self, DdNode cube) -> DdNode
+     |  
+     |  addPermute(self, *args)
+     |      addPermute(DdNode self, IntArray permut) -> DdNode
+     |  
+     |  addRestrict(self, *args)
+     |      addRestrict(DdNode self, DdNode c) -> DdNode
+     |  
+     |  addRoundOff(self, *args)
+     |      addRoundOff(DdNode self, int N) -> DdNode
+     |  
+     |  addScalarInverse(self, *args)
+     |      addScalarInverse(DdNode self, DdNode epsilon) -> DdNode
+     |  
+     |  addSwapVariables(self, *args)
+     |      addSwapVariables(DdNode self, DdArray x, DdArray y, int n) -> DdNode
+     |  
+     |  addTimesPlus(self, *args)
+     |      addTimesPlus(DdNode self, DdNode B, DdArray z, int nz) -> DdNode
+     |  
+     |  addTriangle(self, *args)
+     |      addTriangle(DdNode self, DdNode g, DdArray z, int nz) -> DdNode
+     |  
+     |  addUnivAbstract(self, *args)
+     |      addUnivAbstract(DdNode self, DdNode cube) -> DdNode
+     |  
+     |  addVectorCompose(self, *args)
+     |      addVectorCompose(DdNode self, DdArray vector) -> DdNode
+     |  
+     |  zddChange(self, *args)
+     |      zddChange(DdNode self, int var) -> DdNode
+     |  
+     |  zddComplement(self)
+     |      zddComplement(DdNode self) -> DdNode
+     |  
+     |  zddCount(self)
+     |      zddCount(DdNode self) -> int
+     |  
+     |  zddCountDouble(self)
+     |      zddCountDouble(DdNode self) -> double
+     |  
+     |  zddCountMinterm(self, *args)
+     |      zddCountMinterm(DdNode self, int path) -> double
+     |  
+     |  zddDagSize(self, *args)
+     |      zddDagSize(DdNode self, DdNode p_node) -> int
+     |  
+     |  zddDiff(self, *args)
+     |      zddDiff(DdNode self, DdNode Q) -> DdNode
+     |  
+     |  zddDiffConst(self, *args)
+     |      zddDiffConst(DdNode self, DdNode Q) -> DdNode
+     |  
+     |  zddDivide(self, *args)
+     |      zddDivide(DdNode self, DdNode g) -> DdNode
+     |  
+     |  zddDivideF(self, *args)
+     |      zddDivideF(DdNode self, DdNode g) -> DdNode
+     |  
+     |  zddIntersect(self, *args)
+     |      zddIntersect(DdNode self, DdNode Q) -> DdNode
+     |  
+     |  zddIsop(self, *args)
+     |      zddIsop(DdNode self, DdNode U, DdArray zdd_I) -> DdNode
+     |  
+     |  zddIte(self, *args)
+     |      zddIte(DdNode self, DdNode g, DdNode h) -> DdNode
+     |  
+     |  zddPrintCover(self)
+     |      zddPrintCover(DdNode self) -> int
+     |  
+     |  zddPrintDebug(self, *args)
+     |      zddPrintDebug(DdNode self, int n, int pr) -> int
+     |  
+     |  zddPrintMinterm(self)
+     |      zddPrintMinterm(DdNode self) -> int
+     |  
+     |  zddProduct(self, *args)
+     |      zddProduct(DdNode self, DdNode g) -> DdNode
+     |  
+     |  zddSubset0(self, *args)
+     |      zddSubset0(DdNode self, int var) -> DdNode
+     |  
+     |  zddSubset1(self, *args)
+     |      zddSubset1(DdNode self, int var) -> DdNode
+     |  
+     |  zddUnateProduct(self, *args)
+     |      zddUnateProduct(DdNode self, DdNode g) -> DdNode
+     |  
+     |  zddUnion(self, *args)
+     |      zddUnion(DdNode self, DdNode Q) -> DdNode
+     |  
+     |  zddWeakDiv(self, *args)
+     |      zddWeakDiv(DdNode self, DdNode g) -> DdNode
+     |  
+     |  zddWeakDivF(self, *args)
+     |      zddWeakDivF(DdNode self, DdNode g) -> DdNode
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |  
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |  
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |  
+     |  __swig_destroy__ = <built-in function delete_DdNode>
+     |      delete_DdNode(DdNode self)
+     |  
+     |  __swig_getmethods__ = {}
+     |  
+     |  __swig_setmethods__ = {}
+    
+    class DdTlcInfo(__builtin__.object)
+     |  Helper class for enumeration of two literal clauses. Look at example2.py for usage.
+     |  
+     |  Methods defined here:
+     |  
+     |  ReadIthClause(self, *args)
+     |      ReadIthClause(DdTlcInfo self, int i) -> int
+     |  
+     |  __del__ lambda self
+     |  
+     |  __getattr__ lambda self, name
+     |  
+     |  __init__(self)
+     |      __init__(DdTlcInfo self) -> DdTlcInfo
+     |  
+     |  __repr__ = _swig_repr(self)
+     |  
+     |  __setattr__ lambda self, name, value
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |  
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |  
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |  
+     |  __swig_destroy__ = <built-in function delete_DdTlcInfo>
+     |      delete_DdTlcInfo(DdTlcInfo self)
+     |  
+     |  __swig_getmethods__ = {}
+     |  
+     |  __swig_setmethods__ = {}
+    
+    class DoubleArray(__builtin__.object)
+     |  Proxy of C++ DoubleArray class
+     |  
+     |  Methods defined here:
+     |  
+     |  Assign(self, *args)
+     |      Assign(DoubleArray self, double * list, int k)
+     |  
+     |  Swap(self, *args)
+     |      Swap(DoubleArray self, int i, int j)
+     |  
+     |  __del__ lambda self
+     |  
+     |  __getattr__ lambda self, name
+     |  
+     |  __getitem__(self, *args)
+     |      __getitem__(DoubleArray self, int j) -> double
+     |  
+     |  __init__(self, *args)
+     |      __init__(DoubleArray self, int size) -> DoubleArray
+     |  
+     |  __repr__ = _swig_repr(self)
+     |  
+     |  __setattr__ lambda self, name, value
+     |  
+     |  __setitem__(self, *args)
+     |      __setitem__(DoubleArray self, int j, double val)
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |  
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |  
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+     |  
+     |  vec
+     |      DoubleArray_vec_get(DoubleArray self) -> double *
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |  
+     |  __swig_destroy__ = <built-in function delete_DoubleArray>
+     |      delete_DoubleArray(DoubleArray self)
+     |  
+     |  __swig_getmethods__ = {'vec': <built-in function DoubleArray_vec_get>}
+     |  
+     |  __swig_setmethods__ = {'vec': <built-in function DoubleArray_vec_set>}
+    
+
+
+    class EpDouble(__builtin__.object)
+     |  This provides the functionality of CUDD's extended precision library. In particular, instances of EpDouble may be passed to DdNode.EpdCountMinterm to retrieve the extended counts. Note also that the basic arithmetic operators (+,-,*,/) have been overloaded for use with EpDouble instances
+     |  
+     |  Methods defined here:
+     |  
+     |  EpdAdd(self, *args)
+     |      EpdAdd(EpDouble self, double value)
+     |  
+     |  EpdAdd2(self, *args)
+     |      EpdAdd2(EpDouble self, EpDouble epd2)
+     |  
+     |  EpdAdd3(self, *args)
+     |      EpdAdd3(EpDouble self, EpDouble epd2, EpDouble epd3)
+     |  
+     |  EpdCmp(self, *args)
+     |      EpdCmp(EpDouble self, EpDouble other) -> bool
+     |  
+     |  EpdConvert(self, *args)
+     |      EpdConvert(EpDouble self, double value)
+     |  
+     |  EpdCopy(self, *args)
+     |      EpdCopy(EpDouble self, EpDouble to)
+     |  
+     |  EpdDivide(self, *args)
+     |      EpdDivide(EpDouble self, double value)
+     |  
+     |  EpdDivide2(self, *args)
+     |      EpdDivide2(EpDouble self, EpDouble epd2)
+     |  
+     |  EpdDivide3(self, *args)
+     |      EpdDivide3(EpDouble self, EpDouble epd2, EpDouble epd3)
+     |  
+     |  EpdGetValueAndDecimalExponent(self)
+     |      EpdGetValueAndDecimalExponent(EpDouble self)
+     |  
+     |  EpdIsInf(self)
+     |      EpdIsInf(EpDouble self) -> bool
+     |  
+     |  EpdIsNan(self)
+     |      EpdIsNan(EpDouble self) -> bool
+     |  
+     |  EpdIsNanOrInf(self)
+     |      EpdIsNanOrInf(EpDouble self) -> bool
+     |  
+     |  EpdIsZero(self)
+     |      EpdIsZero(EpDouble self) -> bool
+     |  
+     |  EpdMakeInf(self, *args)
+     |      EpdMakeInf(EpDouble self, int sign)
+     |  
+     |  EpdMakeNan(self)
+     |      EpdMakeNan(EpDouble self)
+     |  
+     |  EpdMakeZero(self, *args)
+     |      EpdMakeZero(EpDouble self, int sign)
+     |  
+     |  EpdMultiply(self, *args)
+     |      EpdMultiply(EpDouble self, double value)
+     |  
+     |  EpdMultiply2(self, *args)
+     |      EpdMultiply2(EpDouble self, EpDouble epd2)
+     |  
+     |  EpdMultiply2Decimal(self, *args)
+     |      EpdMultiply2Decimal(EpDouble self, EpDouble epd2)
+     |  
+     |  EpdMultiply3(self, *args)
+     |      EpdMultiply3(EpDouble self, EpDouble epd2, EpDouble epd3)
+     |  
+     |  EpdMultiply3Decimal(self, *args)
+     |      EpdMultiply3Decimal(EpDouble self, EpDouble epd2, EpDouble epd3)
+     |  
+     |  EpdNormalize(self)
+     |      EpdNormalize(EpDouble self)
+     |  
+     |  EpdNormalizeDecimal(self)
+     |      EpdNormalizeDecimal(EpDouble self)
+     |  
+     |  EpdPow2(self, *args)
+     |      EpdPow2(EpDouble self, int n)
+     |  
+     |  EpdPow2Decimal(self, *args)
+     |      EpdPow2Decimal(EpDouble self, int n)
+     |  
+     |  EpdSubtract(self, *args)
+     |      EpdSubtract(EpDouble self, double value)
+     |  
+     |  EpdSubtract2(self, *args)
+     |      EpdSubtract2(EpDouble self, EpDouble epd2)
+     |  
+     |  EpdSubtract3(self, *args)
+     |      EpdSubtract3(EpDouble self, EpDouble epd2, EpDouble epd3)
+     |  
+     |  __add__(self, *args)
+     |      __add__(EpDouble self, EpDouble other) -> EpDouble
+     |      __add__(EpDouble self, double other) -> EpDouble
+     |  
+     |  __del__ lambda self
+     |  
+     |  __div__(self, *args)
+     |      __div__(EpDouble self, EpDouble other) -> EpDouble
+     |      __div__(EpDouble self, double other) -> EpDouble
+     |  
+     |  __eq__(self, *args)
+     |      __eq__(EpDouble self, EpDouble other) -> bool
+     |  
+     |  __getattr__ lambda self, name
+     |  
+     |  __init__(self, *args)
+     |      __init__(EpDouble self) -> EpDouble
+     |      __init__(EpDouble self, double value) -> EpDouble
+     |      __init__(EpDouble self, EpDouble value) -> EpDouble
+     |  
+     |  __mul__(self, *args)
+     |      __mul__(EpDouble self, EpDouble other) -> EpDouble
+     |      __mul__(EpDouble self, double other) -> EpDouble
+     |  
+     |  __ne__(self, *args)
+     |      __ne__(EpDouble self, EpDouble other) -> bool
+     |  
+     |  __nonzero__(self)
+     |      __nonzero__(EpDouble self) -> bool
+     |  
+     |  __repr__ = _swig_repr(self)
+     |  
+     |  __setattr__ lambda self, name, value
+     |  
+     |  __sub__(self, *args)
+     |      __sub__(EpDouble self, EpDouble other) -> EpDouble
+     |      __sub__(EpDouble self, double other) -> EpDouble
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |  
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |  
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |  
+     |  __swig_destroy__ = <built-in function delete_EpDouble>
+     |      delete_EpDouble(EpDouble self)
+     |  
+     |  __swig_getmethods__ = {}
+     |  
+     |  __swig_setmethods__ = {}
+    
+    class ForeachCubeIterator
+     |  Methods defined here:
+     |  
+     |  __init__(self, Dd)
+     |  
+     |  __iter__(self)
+     |  
+     |  next(self)
+    
+    class ForeachNodeIterator
+     |  Methods defined here:
+     |  
+     |  __init__(self, Dd)
+     |  
+     |  __iter__(self)
+     |  
+     |  next(self)
+    
+    class ForeachPrimeIterator
+     |  Methods defined here:
+     |  
+     |  __init__(self, npair)
+     |  
+     |  __iter__(self)
+     |  
+     |  next(self)
+    
+    class IntArray(__builtin__.object)
+     |  Proxy of C++ IntArray class
+     |  
+     |  Methods defined here:
+     |  
+     |  ArrayAddress(self)
+     |      ArrayAddress(IntArray self) -> int **
+     |  
+     |  Assign(self, *args)
+     |      Assign(IntArray self, int * list, int k)
+     |  
+     |  AssignComplVect(self, *args)
+     |      AssignComplVect(IntArray self, int * str, int size, int univ)
+     |  
+     |  AssignVect(self, *args)
+     |      AssignVect(IntArray self, int * str, int size)
+     |  
+     |  Swap(self, *args)
+     |      Swap(IntArray self, int i, int j)
+     |  
+     |  __del__ lambda self
+     |  
+     |  __getattr__ lambda self, name
+     |  
+     |  __getitem__(self, *args)
+     |      __getitem__(IntArray self, int j) -> int
+     |  
+     |  __init__(self, *args)
+     |      __init__(IntArray self, int size) -> IntArray
+     |  
+     |  __len__(self)
+     |      __len__(IntArray self) -> int
+     |  
+     |  __repr__ = _swig_repr(self)
+     |  
+     |  __setattr__ lambda self, name, value
+     |  
+     |  __setitem__(self, *args)
+     |      __setitem__(IntArray self, int j, int val)
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |  
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |  
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+     |  
+     |  vec
+     |      IntArray_vec_get(IntArray self) -> int *
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |  
+     |  __swig_destroy__ = <built-in function delete_IntArray>
+     |      delete_IntArray(IntArray self)
+     |  
+     |  __swig_getmethods__ = {'vec': <built-in function IntArray_vec_get>}
+     |  
+     |  __swig_setmethods__ = {'vec': <built-in function IntArray_vec_set>}
+    
+    class MtrNode(__builtin__.object)
+     |  Proxy of C++ MtrNode class
+     |  
+     |  Methods defined here:
+     |  
+     |  __del__ lambda self
+     |  
+     |  __getattr__ lambda self, name
+     |  
+     |  __init__(self)
+     |      __init__(MtrNode self) -> MtrNode
+     |  
+     |  __repr__ = _swig_repr(self)
+     |  
+     |  __setattr__ lambda self, name, value
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |  
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |  
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |  
+     |  __swig_destroy__ = <built-in function delete_MtrNode>
+     |      delete_MtrNode(MtrNode self)
+     |  
+     |  __swig_getmethods__ = {}
+     |  
+     |  __swig_setmethods__ = {}
+    class NodePair(__builtin__.object)
+     |  This is used to provide the functionality of prime enumeration in CUDD 2.4.0. Create the NodePair by passing the DdNodes for lower and upper to the constructor. Once that is done, you can iterate over the primes of the NodePair using the Python for statement. There is no need to do this if you are interested in the primes of a simple DdNode -- the package automatically creates the NodePair and destroys it in that case.
+     |  
+     |  Methods defined here:
+     |  
+     |  FirstPrime(self, *args)
+     |      FirstPrime(NodePair self, DdGen gen) -> int
+     |  
+     |  LOWER(self)
+     |      LOWER(NodePair self) -> DdNode
+     |  
+     |  NextPrime(self, *args)
+     |      NextPrime(NodePair self, DdGen gen) -> int
+     |  
+     |  UPPER(self)
+     |      UPPER(NodePair self) -> DdNode
+     |  
+     |  __del__ lambda self
+     |  
+     |  __getattr__ lambda self, name
+     |  
+     |  __init__(self, *args)
+     |      __init__(NodePair self, DdNode lwr, DdNode upr) -> NodePair
+     |  
+     |  __iter__(self)
+     |  
+     |  __repr__ = _swig_repr(self)
+     |  
+     |  __setattr__ lambda self, name, value
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |  
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |  
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |  
+     |  __swig_destroy__ = <built-in function delete_NodePair>
+     |      delete_NodePair(NodePair self)
+     |  
+     |  __swig_getmethods__ = {}
+     |  
+     |  __swig_setmethods__ = {}
+    
+    class RangeError(__builtin__.object)
+     |  Proxy of C++ RangeError class
+     |  
+     |  Methods defined here:
+     |  
+     |  __del__ lambda self
+     |  
+     |  __getattr__ lambda self, name
+     |  
+     |  __init__(self)
+     |      __init__(RangeError self) -> RangeError
+     |  
+     |  __repr__ = _swig_repr(self)
+     |  
+     |  __setattr__ lambda self, name, value
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |  
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |  
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |  
+     |  __swig_destroy__ = <built-in function delete_RangeError>
+     |      delete_RangeError(RangeError self)
+     |  
+     |  __swig_getmethods__ = {}
+     |  
+     |  __swig_setmethods__ = {}
+    
+    class StringArray(__builtin__.object)
+     |  Proxy of C++ StringArray class
+     |  
+     |  Methods defined here:
+     |  
+     |  ArrayAddress(self)
+     |      ArrayAddress(StringArray self) -> char ***
+     |  
+     |  Assign(self, *args)
+     |      Assign(StringArray self, char ** list, int k)
+     |  
+     |  Swap(self, *args)
+     |      Swap(StringArray self, int i, int j)
+     |  
+     |  __del__ lambda self
+     |  
+     |  __getattr__ lambda self, name
+     |  
+     |  __getitem__(self, *args)
+     |      __getitem__(StringArray self, int j) -> char *
+     |  
+     |  __init__(self, *args)
+     |      __init__(StringArray self, int size) -> StringArray
+     |  
+     |  __len__(self)
+     |      __len__(StringArray self) -> int
+     |  
+     |  __repr__ = _swig_repr(self)
+     |  
+     |  __setattr__ lambda self, name, value
+     |  
+     |  __setitem__(self, *args)
+     |      __setitem__(StringArray self, int j, char * val)
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |  
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |  
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+     |  
+     |  vec
+     |      StringArray_vec_get(StringArray self) -> char **
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |  
+     |  __swig_destroy__ = <built-in function delete_StringArray>
+     |      delete_StringArray(StringArray self)
+     |  
+     |  __swig_getmethods__ = {'vec': <built-in function StringArray_vec_get>}
+     |  
+     |  __swig_setmethods__ = {'vec': <built-in function StringArray_vec_set>}
+
+FUNCTIONS
+    DdArray_swigregister(...)
+    
+    DdGen_swigregister(...)
+    
+    DdManager_swigregister(...)
+    
+    DdNode_swigregister(...)
+    
+    DdTlcInfo_swigregister(...)
+    
+    DoubleArray_swigregister(...)
+    
+    EpDouble_swigregister(...)
+    
+    EpdGetExponent(*args)
+        EpdGetExponent(double value) -> int
+    
+    EpdGetExponentDecimal(*args)
+        EpdGetExponentDecimal(double value) -> int
+    
+    IntArray_swigregister(...)
+    
+    IsInfDouble(*args)
+        IsInfDouble(double value) -> bool
+    
+    IsNanDouble(*args)
+        IsNanDouble(double value) -> bool
+    
+    IsNanOrInfDouble(*args)
+        IsNanOrInfDouble(double value) -> bool
+    
+    MtrNode_swigregister(...)
+    
+    NodePair_swigregister(...)
+    
+    RangeError_swigregister(...)
+    
+    StringArray_swigregister(...)
+    
+    cube_tuple_to_str(cube_tup)
+    
+    set_iter_meth(meth, verbose=False)
+
+DATA
+    DOCSTRING = 'PyCUDD 2.0.1\nPython interface to Colorado Univer...y 25 ...
+    cudd_version = 132096
+    cvar = <Swig global variables>
+    iter_meth = 0
+
+(END)
+
