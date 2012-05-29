@@ -1,0 +1,54 @@
+import pycudd as pc
+mgr = pycudd.DdManager()
+mgr.SetDefault()
+
+Wichtige(?) Befehle und ihre Verwendung
+a = mgr.IthVar(0)	--- legt eine Variable mit dem Index 0 an, bei a handelt es sich darauf um den Typ DdNode
+c = a.And(b)		--- konjugiert zwei Ddnodes a und b miteinander, c ist ebenfalls vom Typ Ddnode
+c = a.Or(b)		--- Oder-Verknüpfung zweier Ddnodes a und b, c ist ebenfalls vom Typ Ddnode
+c = a.Nand(b)		--- Nand-Verknüpfung zweier Ddnodes a und b, c ist ebenfalls vom Typ Ddnode
+c = a.Nor(b)		--- Nor-Verknüpfung zweier Ddnodes a und b, c ist ebenfalls vom Typ Ddnode
+c = a.Xor(b)		--- Xor-Verknüpfung zweier Ddnodes a und b, c ist ebenfalls vom Typ Ddnode
+c = a.Xnor(b)		--- Xnor-Verknüpfung zweier Ddnodes a und b, c ist ebenfalls vom Typ Ddnode
+mgr.ReadZero()		--- 0 als Ddnode
+mgr.ReadOne()		--- 1 als Ddnode
+f.PrintMinterm()	--- gibt Minterm Darstellung der Funktion f wieder, dabei wird nur das ON Set angegeben
+f.Compose(a,i)		--- ersetze die Variable mit Index int i durch die Variable/Funktion a in der Funktion f, a und f sind vom Typ Ddnode
+f.Complement()		--- bildet das Komplement einer Funktion f
+mgr.PrintStdOut()	--- jede Menge Infos
+
+ddarr = pc.DdArray(i)   --- legt ein Array von DdNodes an mit der Größe int i
+ddarr.Push(a)		--- fügt Array die Variable a zu
+intarr = pc.IntArray(i) --- legt ein IntArray der Größe int i an
+
+###################################################################################################################
+
+Ausgabe als BLIF:
+dataout = mgr.DumpBlif(i, ddout, inames, onames, mname, filepointer, j)
+--- int i enthält Anzahl der Ausgänge
+--- ddout ist ein DdArray und enthält alle Funktionen vom Typ DdNode, die als Output definiert werden sollen
+--- inames enthält Namen der Inputs, kann None sein (Namen=hexa-Adresse), ansonsten vom Typ char ** (TODO: char ** anlegen)
+--- onames enthält Namen der Outputs, kann None sein (Namen=hexa-Adresse), ansonsten vom Typ char ** (TODO: char ** anlegen)
+--- mname ist vom Typ char (zB 'model0'), kann ebenfalls auf None gesetzt sein
+--- vom Typ FILE *, leider nur hinbekommen Ergebnis in die stdout zu bekommen mit stdout = mgr.ReadStdout() (TODO: in file umleiten)
+--- int j: ominöser Parameter, der nicht in der Dokumentation auftaucht, aber gesetzt werden muss (TODO: Bedeutung herausfinden)
+dataout = mgr.DumpBlifBody(i, ddout, inames, onames, filepointer, j)
+--- gleiche Bedingungen für Variablen wie oben, hier wird nur der BlifBody ausgegeben (ohne header (.model, .inputs, ...)  und footer (.end))
+
+##################################################################################################################
+
+Eventuell wichtig für Optimierung des BDDs:
+pycudd enthält eine Reihe von Reordering Algorithmen, die durch eine Integer Variable namens Cudd_ReorderingType definiert werden
+    CUDD_REORDER_SAME 			->	0	(Algorithmus wird beibehalten)
+    CUDD_REORDER_NONE 			->	1	(keine Algorithmus wird angewendet)
+    CUDD_REORDER_RANDOM			->	2
+    CUDD_REORDER_SIFT			->	4	(Sifting Algorithmus aus der Vorlesung, über Cudd_SetSiftMaxVar kann maximale Variablenzahl angegeben werden)
+    CUDD_REORDER_SIFT_CONVERGE		->	5	(das gleiche, nur konvergierend oO)
+    CUDD_REORDER_GROUP_SIFT		->	14	(siftet nicht nur einzelne Variablen, sondern ganze Gruppen
+    CUDD_REORDER_GROUP_SIFT_CONV	->	15	(das gleiche, nur konvergierend)
+    CUDD_REORDER_ANNEALING		->	16	(Simulated Annealing, sehr langsam!)
+    CUDD_REORDER_EXACT			->	21	(exakte Lösung, sehr langsam, nicht für mehr als 16 Variablen zu gebrauchen)
+
+mgr.ReorderingStatus()	--- erster Wert gibt an, ob Reordering aktiviert ist (0 oder 1), zweiter Wert gibt Enumerate Wert des Algorithmus an (siehe oben)
+mgr.AutodynEnable(i)	--- aktiviere Reordering und setze Algorithmus int i (siehe oben)
+mgr.AutodynDisable()	--- deaktiviere Reordering	
