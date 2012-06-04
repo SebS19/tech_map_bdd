@@ -62,54 +62,55 @@ class Node(object):
 
 	def makeQRBDD(self):
 
-		rootNodes = [self]
-		compareNode = self
-
-		if compareNode.trueNode == compareNode.falseNode:
-			compareNode.setTrueNode(compareNode.falseNode)
-			print "selbst umbiegen I"
+		compareSet=[self]
+		compareNode=self
 
 		while type(compareNode.trueNode) == Node:
 
-			#creating compare set
-			compareSet=[]
-			for knoten in rootNodes:
-				compareSet.append(knoten.falseNode)
-				compareSet.append(knoten.trueNode)
-
-			rootNodes=compareSet[:]
-
-			print compareSet
-
+			rootNodes = compareSet[:]
 
 			while len(compareSet)>0:
 				
+				print len(compareSet)
+				print compareSet
+
 				compareNode = compareSet[0]
 				compareSet.remove(compareNode)
 
-				print compareNode
-				
-				if compareNode.trueNode == compareNode.falseNode:
+				if (compareNode.trueNode == compareNode.falseNode) and not (compareNode.trueNode is compareNode.falseNode):
 					compareNode.setFalseNode(compareNode.trueNode)
 					print "selbst umbiegen II"
 
 				for knoten in compareSet:
 					
-					if compareNode.trueNode == knoten.trueNode:
+					if compareNode.trueNode == knoten.trueNode and not (compareNode.trueNode is knoten.trueNode):
 						knoten.setTrueNode(compareNode.trueNode)
 						print "umbiegen 1"
 
-					if compareNode.trueNode == knoten.falseNode:
+					if compareNode.trueNode == knoten.falseNode and not (compareNode.trueNode is knoten.falseNode):
 						knoten.setFalseNode(compareNode.trueNode)
 						print "umbiegen 2"
 
-					if compareNode.falseNode == knoten.trueNode:
+					if compareNode.falseNode == knoten.trueNode and not (compareNode.falseNode is knoten.trueNode):
 						knoten.setTrueNode(compareNode.falseNode)
 						print "umbiegen 3"
 
-					if compareNode.falseNode == knoten.falseNode:
+					if compareNode.falseNode == knoten.falseNode and not (compareNode.falseNode is knoten.falseNode):
 						knoten.setFalseNode(compareNode.falseNode)
 						print "umbiegen 4" 
+
+			#creating compare set
+			compareSet=[]
+			for knoten in rootNodes:
+				
+				if not knoten.falseNode in compareSet:
+					compareSet.append(knoten.falseNode)
+				
+				if not knoten.trueNode in compareSet:
+					compareSet.append(knoten.trueNode)
+				
+
+
 
 
 	def dotPrint(self):
@@ -122,20 +123,22 @@ class Node(object):
 			nextNodeList = []
 
 			for knoten in nodeList:
-				outputString += str(id(knoten)) + ' [label="%s"]' %knoten.variable + "\n"
-				outputString += str(id(knoten))  + "->" + str(id(knoten.falseNode))+ "[style=dotted] \n"
-				outputString += str(id(knoten)) + "->" + str(id(knoten.trueNode))+ "\n"
+				
+				outputString += str(id(knoten))  + ' [label="%s"]' %knoten.variable + "\n"
+				outputString += str(id(knoten))  + "->" + str(id(knoten.falseNode)) + "[style=dotted] \n"
+				outputString += str(id(knoten))  + "->" + str(id(knoten.trueNode))  + "\n"
 
 				if type(knoten.falseNode) == Node:
-					nextNodeList.append(knoten.falseNode)
 					
-					if not knoten.falseNode is knoten.trueNode:
+					if not (knoten.falseNode in nextNodeList):
+						nextNodeList.append(knoten.falseNode)
+					
+					if not (knoten.trueNode in nextNodeList):
 						nextNodeList.append(knoten.trueNode)
-				else:
-					lastNode = knoten
 
-
+			
 			nodeList = nextNodeList[:]
+
 
 		outputString += str(id(Node.T)) + ' [label="True"] \n'
 		outputString += str(id(Node.F)) + ' [label="False"] \n'
@@ -149,7 +152,7 @@ class Node(object):
 		datei.close()
 		commands.getstatusoutput('dot -Tps graph.dot -o graph.ps')
 		commands.getstatusoutput('ps2pdf graph.ps')
-		return "digraph G { \n" + self.dotPrint() + "\n}"
+		return #"digraph G { \n" + self.dotPrint() + "\n}"
 
 
 
