@@ -1,4 +1,5 @@
 import commands
+import copy
 
 class Node(object):
 
@@ -103,12 +104,14 @@ def adjust(stringInput, rootNode):
 			bddAdjust(currentNode.falseNode, stringInput[currentDepth+1:])
 			return
 
-		print currentNode
+	print rootNode
 	# setting the leaves
 	if stringInput[-1] == '1' or stringInput[-1] == '-':	
 		currentNode.setTrueNode(Node.T)
 	if stringInput[-1] == '0' or stringInput[-1] == '-':	
 		currentNode.setFalseNode(Node.T)
+
+	print rootNode
 
 
 def createTree(n):
@@ -117,7 +120,9 @@ def createTree(n):
 	k=2
 
 	while n > 1:
-		tree 	= Node('x%i' %k, subTree, subTree)
+		a = copy.deepcopy(subTree)
+		b = copy.deepcopy(subTree)
+		tree 	= Node('x%i' %k, a, b)
 		subTree = tree
 		k+=1
 		n-=1
