@@ -68,3 +68,24 @@ class Node(object):
 		commands.getstatusoutput('dot -Tps graph.dot -o graph.ps')
 		commands.getstatusoutput('ps2pdf graph.ps')
 		return "digraph G { \n" + self.dotPrint() + "\n}"
+
+
+def bddAdjust(stringInput, rootNode):
+	currentNode = rootNode
+	currentDepth = 0
+	# getting the last variable node
+	for literal in stringInput[:-1]:
+		currentDepth += 1	
+		if literal == '1':
+			currentNode = currentNode.trueNode
+		elif literal == '0':
+			currentNode = currentNode.falseNode
+		elif literal == '-':
+			bddAdjust(currentNode.trueNode, stringInput[currentDepth+1:])
+			bddAdjust(currentNode.falseNode, stringInput[currentDepth+1:])
+			return
+	# setting the leaves
+	if stringInput[-1] == '1' or stringInput[-1] == '-':	
+		currentNode.setTrueNode(Node.T)
+	if stringInput[-1] == '0' or stringInput[-1] == '-':	
+		currentNode.setFalseNode(Node.T)
