@@ -81,7 +81,7 @@ class Node(object):
 
 	def dotPrint2(self):
 		datei = open("graph.dot","w")
-		datei.write("digraph G { \n" + self.dotPrint() + "\n}")
+		datei.write("digraph G { \n" + "rotate=90\n" "center=1\n" + self.dotPrint() + "\n}")
 		datei.close()
 		commands.getstatusoutput('dot -Tps graph.dot -o graph.ps')
 		commands.getstatusoutput('ps2pdf graph.ps')
