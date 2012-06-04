@@ -89,6 +89,9 @@ class Node(object):
 
 
 
+
+
+
 def adjust(stringInput, rootNode):
 	currentNode = rootNode
 	currentDepth = 0
@@ -100,18 +103,16 @@ def adjust(stringInput, rootNode):
 		elif literal == '0':
 			currentNode = currentNode.falseNode
 		elif literal == '-':
-			bddAdjust(currentNode.trueNode, stringInput[currentDepth+1:])
-			bddAdjust(currentNode.falseNode, stringInput[currentDepth+1:])
+			adjust(stringInput[currentDepth+1:], currentNode.trueNode)
+			adjust(stringInput[currentDepth+1:], currentNode.falseNode)
 			return
 
-	print rootNode
 	# setting the leaves
 	if stringInput[-1] == '1' or stringInput[-1] == '-':	
 		currentNode.setTrueNode(Node.T)
 	if stringInput[-1] == '0' or stringInput[-1] == '-':	
 		currentNode.setFalseNode(Node.T)
 
-	print rootNode
 
 
 def createTree(n):
@@ -128,4 +129,6 @@ def createTree(n):
 		n-=1
 
 	return tree
+
+
 
