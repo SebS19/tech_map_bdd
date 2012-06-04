@@ -51,6 +51,15 @@ class Node(object):
 		self.__falseNode = newNode
 
 
+	def __eq__(self, otherNode):
+		if self.__variable == otherNode.variable:
+			if type(self.__trueNode) == Node:
+				return self.__trueNode == otherNode.trueNode and self.__falseNode == otherNode.falseNode 
+			else
+				return repr(self.__trueNode) == repr(otherNode.trueNode) and repr(self.__falseNode) == repr(otherNode.falseNode)
+		else
+			return false
+
 	def dotPrint(self):
 		
 		temp = Node.counter
