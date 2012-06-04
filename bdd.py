@@ -60,25 +60,89 @@ class Node(object):
 		else:
 			return False
 
+	def makeQRBDD(self):
+
+		rootNodes = [self]
+		compareNode = self
+
+		if compareNode.trueNode == compareNode.falseNode:
+			compareNode.setTrueNode(compareNode.falseNode)
+			print "selbst umbiegen I"
+
+		while type(compareNode.trueNode) == Node:
+
+			#creating compare set
+			compareSet=[]
+			for knoten in rootNodes:
+				compareSet.append(knoten.falseNode)
+				compareSet.append(knoten.trueNode)
+
+			rootNodes=compareSet[:]
+
+			print compareSet
+
+
+			while len(compareSet)>0:
+				
+				compareNode = compareSet[0]
+				compareSet.remove(compareNode)
+
+				print compareNode
+				
+				if compareNode.trueNode == compareNode.falseNode:
+					compareNode.setFalseNode(compareNode.trueNode)
+					print "selbst umbiegen II"
+
+				for knoten in compareSet:
+					
+					if compareNode.trueNode == knoten.trueNode:
+						knoten.setTrueNode(compareNode.trueNode)
+						print "umbiegen 1"
+
+					if compareNode.trueNode == knoten.falseNode:
+						knoten.setFalseNode(compareNode.trueNode)
+						print "umbiegen 2"
+
+					if compareNode.falseNode == knoten.trueNode:
+						knoten.setTrueNode(compareNode.falseNode)
+						print "umbiegen 3"
+
+					if compareNode.falseNode == knoten.falseNode:
+						knoten.setFalseNode(compareNode.falseNode)
+						print "umbiegen 4" 
+
+
 	def dotPrint(self):
 		
-		temp = Node.counter
-		Node.counter +=1
+		nodeList= [self]
+		outputString = ""
 
-		if type(self.__trueNode) == Node:
+		while len(nodeList) > 0:
+			
+			nextNodeList = []
 
-			return	repr(self.variable)[1:-1] + "_%i" %temp + "->" + repr(self.__trueNode.variable)[1:-1] 	+ "_" 	+ str(Node.counter)  	+ ";\n" 					+ \
-					str(self.__trueNode.dotPrint()) + \
-					repr(self.variable)[1:-1] + "_%i" %temp + "->" + repr(self.__falseNode.variable)[1:-1] 	+ "_" 	+ str(Node.counter) 	+ "[style=dotted];\n"  	+ \
-					str(self.__falseNode.dotPrint())
+			for knoten in nodeList:
+				outputString += str(id(knoten)) + ' [label="%s"]' %knoten.variable + "\n"
+				outputString += str(id(knoten))  + "->" + str(id(knoten.falseNode))+ "[style=dotted] \n"
+				outputString += str(id(knoten)) + "->" + str(id(knoten.trueNode))+ "\n"
 
-		else:
+				if type(knoten.falseNode) == Node:
+					nextNodeList.append(knoten.falseNode)
+					
+					if not knoten.falseNode is knoten.trueNode:
+						nextNodeList.append(knoten.trueNode)
+				else:
+					lastNode = knoten
 
-			return 	repr(self.variable)[1:-1] + "_%i" %temp +";\n" + \
-					repr(self.variable)[1:-1] + "_%i" %temp + "->" + repr(self.__trueNode) + ";\n" + \
-					repr(self.variable)[1:-1] + "_%i" %temp + "->" + repr(self.__falseNode) + "[style=dotted];\n" 
 
+			nodeList = nextNodeList[:]
 
+		outputString += str(id(Node.T)) + ' [label="True"] \n'
+		outputString += str(id(Node.F)) + ' [label="False"] \n'
+
+		return outputString
+
+	
 	def dotPrint2(self):
 		datei = open("graph.dot","w")
 		datei.write("digraph G { \n" + "rotate=90\n" "center=1\n" + self.dotPrint() + "\n}")
