@@ -93,11 +93,13 @@ def adjust(stringInput, rootNode):
 			bddAdjust(currentNode.trueNode, stringInput[currentDepth+1:])
 			bddAdjust(currentNode.falseNode, stringInput[currentDepth+1:])
 			return
+
+		print currentNode
 	# setting the leaves
 	if stringInput[-1] == '1' or stringInput[-1] == '-':	
 		currentNode.setTrueNode(Node.T)
 	if stringInput[-1] == '0' or stringInput[-1] == '-':	
-		currentNode.setFalseNode(Node.F)
+		currentNode.setFalseNode(Node.T)
 
 
 def createTree(n):

@@ -84,8 +84,9 @@ lineCounter=0
 for line in equations:
 
 	for x in range(outputs):
-		
+
 		if line[1][x] == '1':
+			print line[0]
 			bdd.adjust(line[0], output_eqn[x])
 
 
