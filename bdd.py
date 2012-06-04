@@ -27,7 +27,7 @@ class Node(object):
 	# getter (without the need of "()") for private variables
 
 	@property
-	def trueNode(self):
+	def getTrueNode(self):
 		return self.__trueNode
 
 	@property		
@@ -40,7 +40,15 @@ class Node(object):
 
 	# defining the textual representation of a node (keep in mind that this is a recursion)
 	def __repr__(self):
-		return  "Node("+ repr(self.variable) + ":" + repr(self.trueNode) + "|" + repr(self.falseNode) + ")"
+		return  "Node("+ repr(self.__variable) + ":" + repr(self.__trueNode) + "|" + repr(self.__falseNode) + ")"
+
+	
+	def setTrueNode(self,newNode):
+		self.__trueNode = newNode
+
+	def setFalseNode(self,newNode):
+		self.__falseNode = newNode
+
 
 	def dotPrint(self):
 		
@@ -70,6 +78,7 @@ class Node(object):
 		return "digraph G { \n" + self.dotPrint() + "\n}"
 
 
+<<<<<<< HEAD
 def bddAdjust(stringInput, rootNode):
 	currentNode = rootNode
 	currentDepth = 0
@@ -89,3 +98,19 @@ def bddAdjust(stringInput, rootNode):
 		currentNode.setTrueNode(Node.T)
 	if stringInput[-1] == '0' or stringInput[-1] == '-':	
 		currentNode.setFalseNode(Node.T)
+=======
+
+def createTree(n):
+	
+	subTree = Node('x1', Node.F, Node.F)
+	k=2
+
+	while n > 1:
+		tree 	= Node('x%i' %k, subTree, subTree)
+		subTree = tree
+		k+=1
+		n-=1
+
+	return tree
+
+>>>>>>> 7c288d000fd4c419d1451d69d96f5de5fdaab500
