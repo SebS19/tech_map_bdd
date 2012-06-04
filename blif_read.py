@@ -1,7 +1,8 @@
-import pycudd as pc
+#import pycudd as pc
 #from eqn import *
 
-
+import bdd
+'''
 m = pc.DdManager()
 m.SetDefault()
 
@@ -36,7 +37,7 @@ class eqn:
 	def printMinterm(self):
 		self.logic.PrintMinterm()
 
-
+''' 
 
 #------- file read ---------------------------------------------
 
@@ -73,7 +74,7 @@ for line in content2:
 
 output_eqn = []
 for i in range(outputs):
-	output_eqn.append(eqn(m))
+	output_eqn.append(bdd.createTree(inputs))
 
 
 
@@ -83,8 +84,9 @@ lineCounter=0
 for line in equations:
 
 	for x in range(outputs):
+		
 		if line[1][x] == '1':
-			output_eqn[x].addLogic(line[0],m)
+			bdd.adjust(line[0], output_eqn[x])
 
 
 
@@ -93,9 +95,11 @@ for line in equations:
 print "inputs: %i" %inputs
 print "outputs: %i" %outputs
 
-for x in range(len(output_eqn)):
-	print "MINTERM OUTPUT %i" %x
-	output_eqn[x].printMinterm()
+#for x in range(len(output_eqn)):
+#	output_eqn[x].dotPrint2()
+output_eqn[0].dotPrint2()
+
+
 
 
 

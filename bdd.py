@@ -27,7 +27,7 @@ class Node(object):
 	# getter (without the need of "()") for private variables
 
 	@property
-	def getTrueNode(self):
+	def trueNode(self):
 		return self.__trueNode
 
 	@property		
@@ -78,8 +78,8 @@ class Node(object):
 		return "digraph G { \n" + self.dotPrint() + "\n}"
 
 
-<<<<<<< HEAD
-def bddAdjust(stringInput, rootNode):
+
+def adjust(stringInput, rootNode):
 	currentNode = rootNode
 	currentDepth = 0
 	# getting the last variable node
@@ -97,8 +97,8 @@ def bddAdjust(stringInput, rootNode):
 	if stringInput[-1] == '1' or stringInput[-1] == '-':	
 		currentNode.setTrueNode(Node.T)
 	if stringInput[-1] == '0' or stringInput[-1] == '-':	
-		currentNode.setFalseNode(Node.T)
-=======
+		currentNode.setFalseNode(Node.F)
+
 
 def createTree(n):
 	
@@ -113,4 +113,3 @@ def createTree(n):
 
 	return tree
 
->>>>>>> 7c288d000fd4c419d1451d69d96f5de5fdaab500
