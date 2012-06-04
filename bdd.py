@@ -27,7 +27,7 @@ class Node(object):
 	# getter (without the need of "()") for private variables
 
 	@property
-	def trueNode(self):
+	def getTrueNode(self):
 		return self.__trueNode
 
 	@property		
@@ -40,7 +40,15 @@ class Node(object):
 
 	# defining the textual representation of a node (keep in mind that this is a recursion)
 	def __repr__(self):
-		return  "Node("+ repr(self.variable) + ":" + repr(self.trueNode) + "|" + repr(self.falseNode) + ")"
+		return  "Node("+ repr(self.__variable) + ":" + repr(self.__trueNode) + "|" + repr(self.__falseNode) + ")"
+
+	
+	def setTrueNode(self,newNode):
+		self.__trueNode = newNode
+
+	def setFalseNode(self,newNode):
+		self.__falseNode = newNode
+
 
 	def dotPrint(self):
 		
@@ -68,3 +76,19 @@ class Node(object):
 		commands.getstatusoutput('dot -Tps graph.dot -o graph.ps')
 		commands.getstatusoutput('ps2pdf graph.ps')
 		return "digraph G { \n" + self.dotPrint() + "\n}"
+
+
+
+def createTree(n):
+	
+	subTree = Node('x1', Node.F, Node.F)
+	k=2
+
+	while n > 1:
+		tree 	= Node('x%i' %k, subTree, subTree)
+		subTree = tree
+		k+=1
+		n-=1
+
+	return tree
+
