@@ -103,8 +103,8 @@ def adjust(stringInput, rootNode):
 		elif literal == '0':
 			currentNode = currentNode.falseNode
 		elif literal == '-':
-			adjust(stringInput[currentDepth+1:], currentNode.trueNode)
-			adjust(stringInput[currentDepth+1:], currentNode.falseNode)
+			adjust(stringInput[currentDepth:], currentNode.trueNode)
+			adjust(stringInput[currentDepth:], currentNode.falseNode)
 			return
 
 	# setting the leaves
