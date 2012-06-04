@@ -5,15 +5,16 @@ import bdd
 n1=bdd.Node('x1', bdd.Node.T, bdd.Node.T)
 n2=bdd.Node('x1', bdd.Node.F, bdd.Node.F)
 
-n2.setTrueNode(bdd.Node.T)
-n2.setFalseNode(bdd.Node.T)
+n3=bdd.Node('x1', bdd.Node.T, bdd.Node.T)
+n4=bdd.Node('x1', bdd.Node.F, bdd.Node.F)
 
-print n2
-n3=bdd.Node('x2', n1, n2)
 
-n4=bdd.Node('x3', n3, n3)
+n5 = bdd.Node('x2', n1,n2)
+n6 = bdd.Node('x2', n3,n4)
 
-n5= bdd.Node('x4', n4, n4)
+n7 = bdd.Node('x3, n5, n6')
+
+
 
 #print n1
 #print n2
@@ -23,6 +24,6 @@ n5= bdd.Node('x4', n4, n4)
 #print n2.dotPrint2()
 
 
-gen=bdd.createTree(4)
+#gen=bdd.createTree(4)
 
-gen.dotPrint2()
+#gen.dotPrint2()

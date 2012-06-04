@@ -55,10 +55,10 @@ class Node(object):
 		if self.__variable == otherNode.variable:
 			if type(self.__trueNode) == Node:
 				return self.__trueNode == otherNode.trueNode and self.__falseNode == otherNode.falseNode 
-			else
+			else:
 				return repr(self.__trueNode) == repr(otherNode.trueNode) and repr(self.__falseNode) == repr(otherNode.falseNode)
-		else
-			return false
+		else:
+			return False
 
 	def dotPrint(self):
 		
