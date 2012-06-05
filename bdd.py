@@ -198,7 +198,7 @@ def createTree(n):
 	return tree
 
 def bddToBlif(rootNode):
-	stringOutput = ''
+	stringOutput = '\n######################################\n\nBLIF output:\n'
 	arrayOnSetAll = flatten_tuple(getAllOnPaths(getHeight(rootNode), rootNode, ''))
 	arrayOnSetAll = filter (lambda x: x!=None, arrayOnSetAll)			# remove all None entries	
 
