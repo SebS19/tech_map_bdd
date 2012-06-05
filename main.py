@@ -80,6 +80,7 @@ for i in range(outputs):
 
 #------- extract on-set to output functions ----------
 
+print "BLIF input On set:"
 lineCounter=0
 for line in equations:
 
@@ -94,13 +95,14 @@ for line in equations:
 #------- done! -------------
 
 print "inputs: %i" %inputs
-print "outputs: %i" %outputs
+print "outputs: %i \n\n######################################\n" %outputs
 
 #for x in range(len(output_eqn)):
 #	output_eqn[x].dotPrint2()
 output_eqn[0].dotPrint2()
 
-
+output_eqn[0].makeQRBDD()
+print bdd.bddToBlif(output_eqn[0])
 
 
 
