@@ -71,33 +71,33 @@ class Node(object):
 
 			while len(compareSet)>0:
 				
-				print len(compareSet)
-				print compareSet
+				#print len(compareSet)
+				#print compareSet
 
 				compareNode = compareSet[0]
 				compareSet.remove(compareNode)
 
 				if (compareNode.trueNode == compareNode.falseNode) and not (compareNode.trueNode is compareNode.falseNode):
 					compareNode.setFalseNode(compareNode.trueNode)
-					print "selbst umbiegen II"
+					#print "selbst umbiegen II"
 
 				for knoten in compareSet:
 					
 					if compareNode.trueNode == knoten.trueNode and not (compareNode.trueNode is knoten.trueNode):
 						knoten.setTrueNode(compareNode.trueNode)
-						print "umbiegen 1"
+						#print "umbiegen 1"
 
 					if compareNode.trueNode == knoten.falseNode and not (compareNode.trueNode is knoten.falseNode):
 						knoten.setFalseNode(compareNode.trueNode)
-						print "umbiegen 2"
+						#print "umbiegen 2"
 
 					if compareNode.falseNode == knoten.trueNode and not (compareNode.falseNode is knoten.trueNode):
 						knoten.setTrueNode(compareNode.falseNode)
-						print "umbiegen 3"
+						#print "umbiegen 3"
 
 					if compareNode.falseNode == knoten.falseNode and not (compareNode.falseNode is knoten.falseNode):
 						knoten.setFalseNode(compareNode.falseNode)
-						print "umbiegen 4" 
+						#print "umbiegen 4" 
 
 			#creating compare set
 			compareSet=[]
