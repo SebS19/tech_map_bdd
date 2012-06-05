@@ -105,14 +105,22 @@ output_eqn[0].makeQRBDD()
 
 
 #------- Output file ---------
-# i think the blif file must have as many models as splitted trees
+
+numberOfPartialTrees = 1	# must be deleted after implementing the algorithm
+
 outputContent = ".model " + f.name.split('.')[0] + '_k_feasible\n.inputs'
 for inVar in range(0,inputs):
 	outputContent += " x%s" %inVar
-outputContent += "\n.outputs y\n.names"
-for inVar in range(0,inputs):
-        outputContent += " x%s" %inVar
-outputContent += " y\n" + bdd.bddToBlif(output_eqn[0]) + "\n.end" 
+outputContent += "\n.outputs"
+for outVar in range(0,outputs):
+	outputContent += " y%s" %outVar
+
+for module in range(0,numberOfPartialTrees):
+	outputContent += "\n.names"
+	for inVar in range(0,inputs):			# must be adjusted to the remaining input parameters 
+	        outputContent += " x%s" %inVar
+	outputContent += " y%s\n" %module + bdd.bddToBlif(output_eqn[module]) 
+outputContent += "\nend"
 
 	
 #print bdd.bddToBlif(output_eqn[0])
