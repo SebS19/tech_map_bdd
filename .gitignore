@@ -10,3 +10,7 @@
 *.rar
 *.tar
 *.zip
+*.pdf
+*.ps
+*.dot
+*.pyc
