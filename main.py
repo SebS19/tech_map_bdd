@@ -102,7 +102,23 @@ print "outputs: %i \n\n######################################\n" %outputs
 output_eqn[0].dotPrint2()
 
 output_eqn[0].makeQRBDD()
-print bdd.bddToBlif(output_eqn[0])
 
 
+#------- Output file ---------
+# i think the blif file must have as many models as splitted trees
+outputContent = ".model " + f.name.split('.')[0] + '_k_feasible\n.inputs'
+for inVar in range(0,inputs):
+	outputContent += " x%s" %inVar
+outputContent += "\n.outputs y\n.names"
+for inVar in range(0,inputs):
+        outputContent += " x%s" %inVar
+outputContent += " y\n" + bdd.bddToBlif(output_eqn[0]) + "\n.end" 
 
+	
+#print bdd.bddToBlif(output_eqn[0])
+
+outputFile = open(f.name.split('.')[0] + '_k_feasible.blif', 'w') 
+print >>outputFile, outputContent
+outputFile.close()
+
+print "\n>>> Saved Blif Output to " + outputFile.name
