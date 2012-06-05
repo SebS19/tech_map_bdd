@@ -51,12 +51,6 @@ class Node(object):
 	def setFalseNode(self,newNode):
 		self.__falseNode = newNode
 
-	def getHeight(self):
-		if type(self.__trueNode) != Node:
-			return 1
-		else:
-			return getHeight(self.__trueNode) + 1
-
 	def __eq__(self, otherNode):
 		if self.__variable == otherNode.variable:
 			if type(self.__trueNode) == Node:
@@ -205,23 +199,32 @@ def createTree(n):
 
 def bddToBlif(rootNode):
 	stringOutput = ''
-	treeHeight = rootNode.getHeight()
-	arrayOnSetAll = flatten_tuple(getAllOnPaths(treeHeight, rootNode, ''))
-	arrayOnSetAll = filter (lambda x: x!=None, arrayOnSetAll)			 # remove all None Entries	
-	
-	# next step: including dont cares
-	# ...
+	arrayOnSetAll = flatten_tuple(getAllOnPaths(getHeight(rootNode), rootNode, ''))
+	arrayOnSetAll = filter (lambda x: x!=None, arrayOnSetAll)			# remove all None entries	
 
-	# converting to blif string format
+	# converting array to blif string format
 	for minterm in arrayOnSetAll[:-1]:
 		stringOutput += minterm + " 1" + '\n'
-	stringOutput += arrayOnSetAll[-1] + " 1"
+	stringOutput += arrayOnSetAll[-1] + " 1"					# last line without newline at the end
 	return stringOutput 
 	
+# auxiliary function to descend recursive through the tree and save all ways of the on set
 def getAllOnPaths(treeheight, rootNode, way):
+	# termination:
 	if treeheight == 0 and repr(rootNode)=='True':
 		return way
 	elif treeheight == 0:
 		return
-	return getAllOnPaths(treeheight-1, rootNode.trueNode, way+'1'), getAllOnPaths(treeheight-1, rootNode.falseNode, way+'0')
+	# recursive descent:
+	if (rootNode.trueNode is rootNode.falseNode):
+		return getAllOnPaths(treeheight-1, rootNode.trueNode, way+'-')
+	else:
+		return getAllOnPaths(treeheight-1, rootNode.trueNode, way+'1'), getAllOnPaths(treeheight-1, rootNode.falseNode, way+'0')
 
+
+# auxiliary function to get height of a tree
+def getHeight(rootNode):
+	if type(rootNode.trueNode) != Node:
+		return 1
+	else:
+		return getHeight(rootNode.trueNode) + 1
