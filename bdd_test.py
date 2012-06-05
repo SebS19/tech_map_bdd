@@ -22,6 +22,8 @@ n7 = bdd.Node('x3', n5, n6)
 
 n7.makeQRBDD()
 n7.makeQRBDD()
+print "\n###############################\n\nBLIF representation:"
+print bdd.bddToBlif(n7)
 n7.dotPrint2()
 
 
