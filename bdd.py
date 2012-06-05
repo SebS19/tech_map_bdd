@@ -1,5 +1,6 @@
 import commands
 import copy
+from basicfunctions import flatten_tuple
 
 class Node(object):
 
@@ -50,6 +51,11 @@ class Node(object):
 	def setFalseNode(self,newNode):
 		self.__falseNode = newNode
 
+	def getHeight(self):
+		if type(self.__trueNode) != Node:
+			return 1
+		else:
+			return getHeight(self.__trueNode) + 1
 
 	def __eq__(self, otherNode):
 		if self.__variable == otherNode.variable:
@@ -130,5 +136,25 @@ def createTree(n):
 
 	return tree
 
+def bddToBlif(rootNode):
+	stringOutput = ''
+	treeHeight = rootNode.getHeight()
+	arrayOnSetAll = flatten_tuple(getAllOnPaths(treeHeight, rootNode, ''))
+	arrayOnSetAll = filter (lambda x: x!=None, arrayOnSetAll)			 # remove all None Entries	
+	
+	# next step: including dont cares
+	# ...
 
+	# converting to blif string format
+	for minterm in arrayOnSetAll[:-1]:
+		stringOutput += minterm + " 1" + '\n'
+	stringOutput += arrayOnSetAll[-1] + " 1"
+	return stringOutput 
+	
+def getAllOnPaths(treeheight, rootNode, way):
+	if treeheight == 0 and repr(rootNode)=='True':
+		return way
+	elif treeheight == 0:
+		return
+	return getAllOnPaths(treeheight-1, rootNode.trueNode, way+'1'), getAllOnPaths(treeheight-1, rootNode.falseNode, way+'0')
 
