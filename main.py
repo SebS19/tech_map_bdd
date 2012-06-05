@@ -42,6 +42,15 @@ class eqn:
 #------- file read ---------------------------------------------
 
 f = open('absp.pla','r')
+#f = open('blif_src/spla.pla','r')
+#f = open('blif_src/apex2.pla','r')
+#f = open('blif_src/seq.pla','r')
+#f = open('blif_src/ex1010.pla','r')
+#f = open('blif_src/pdc.pla','r')
+#f = open('blif_src/apex4.pla','r')
+#f = open('blif_src/misex3.pla','r')
+#f = open('blif_src/ex5.pla','r')
+
 
 content = f.readlines()
 
@@ -106,21 +115,19 @@ output_eqn[0].makeQRBDD()
 
 #------- Output file ---------
 
-numberOfPartialTrees = 1	# must be deleted after implementing the algorithm
-
-outputContent = ".model " + f.name.split('.')[0] + '_k_feasible\n.inputs'
+outputContent = ".model " + f.name.split('/')[-1].split('.')[0] + '_k_feasible\n.inputs'
 for inVar in range(0,inputs):
 	outputContent += " x%s" %inVar
 outputContent += "\n.outputs"
 for outVar in range(0,outputs):
 	outputContent += " y%s" %outVar
 
-for module in range(0,numberOfPartialTrees):
+for module in range(0,outputs):
 	outputContent += "\n.names"
 	for inVar in range(0,inputs):			# must be adjusted to the remaining input parameters 
 	        outputContent += " x%s" %inVar
 	outputContent += " y%s\n" %module + bdd.bddToBlif(output_eqn[module]) 
-outputContent += "\nend"
+outputContent += "\n.end"
 
 	
 #print bdd.bddToBlif(output_eqn[0])
