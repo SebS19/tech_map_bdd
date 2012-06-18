@@ -76,7 +76,17 @@ class Maxterm(object):
 
 	def __eq__(self, maxterm):
 		return self.__content == maxterm	
+
+	# implement indexing
+	def __getitem__(self, getkey):
+		return self.__content[getkey]
 	
+	def __setitem__(self,setkey,setvalue):
+		if( not(type(setvalue) == Minterm) ):
+			raise TypeError('Can only add Minterms to type Maxterm.')	
+		else:
+			self.__content[setkey] = setvalue
+
 	# make Maxterm iterable
 	def __iter__(self):
 		return self
