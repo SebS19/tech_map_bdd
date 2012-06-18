@@ -2,7 +2,7 @@
 class Minterm(object):
 
 	def __init__(self, index=-1):
-		self.__index = index
+		self.__index = index # index is optional, maybe not needed
 		self.__content = []
 
 	def __repr__(self):
@@ -64,7 +64,7 @@ class Minterm(object):
 class Maxterm(object):
 
 	def __init__(self, index=-1):
-		self.__index = index
+		self.__index = index # index is optional, maybe not needed
 		self.__content = []
 		self.__iterindex = 0 
 
@@ -140,3 +140,18 @@ class Maxterm(object):
 		if (self.isEmpty()):
 			self.__content = [0]
 		return 
+
+def buildMinterm(stringInput):
+	newMinterm = Minterm()
+	variableCounter = 1
+	for literal in stringInput:
+		if literal == '1':
+			newMinterm.addLiteral('x' + str(variableCounter))
+		elif literal == '0':
+			newMinterm.addLiteral('~x' + str(variableCounter))
+		# elif literal == '-': do nothing
+		variableCounter += 1
+
+	return newMinterm
+			
+		

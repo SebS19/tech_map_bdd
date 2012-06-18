@@ -41,10 +41,10 @@ class eqn:
 
 #------- file read ---------------------------------------------
 
-f = open('absp.pla','r')
+#f = open('absp.pla','r')
 #f = open('blif_src/spla.pla','r')
 #f = open('blif_src/apex2.pla','r')
-#f = open('blif_src/seq.pla','r')
+f = open('blif_src/seq.pla','r')
 #f = open('blif_src/ex1010.pla','r')
 #f = open('blif_src/pdc.pla','r')
 #f = open('blif_src/apex4.pla','r')
