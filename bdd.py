@@ -62,8 +62,6 @@ class Node(object):
 
 
 
-
-
 	def makeQRBDD(self):
 
 		compareSet=[self]
@@ -130,15 +128,10 @@ class Node(object):
 				outputString += str(id(knoten))  + "->" + str(id(knoten.trueNode))  + "\n"
 
 				if type(knoten.falseNode) == Node:
-					
-					if not (knoten.falseNode in nextNodeList):
-						nextNodeList.append(knoten.falseNode)
-					
-					if not (knoten.trueNode in nextNodeList):
-						nextNodeList.append(knoten.trueNode)
+					nextNodeList.append(knoten.falseNode)
+					nextNodeList.append(knoten.trueNode)
 
-			
-			nodeList = nextNodeList[:]
+			nodeList = set(nextNodeList[:])
 
 
 		outputString += str(id(Node.T)) + ' [label="True"] \n'
@@ -154,7 +147,6 @@ class Node(object):
 		commands.getstatusoutput('dot -Tps graph.dot -o graph.ps')
 		commands.getstatusoutput('ps2pdf graph.ps')
 		return #"digraph G { \n" + self.dotPrint() + "\n}"
-
 
 
 
@@ -237,17 +229,17 @@ def doShannon(maxterm, level, height):
 	maxTermT.setLiteralTrue( 'x' + str(level))
 	maxTermF.setLiteralFalse('x' + str(level))
 
-	print "--- aktueller maxTerm ---- \n"
-	print maxterm
+	#print "--- aktueller maxTerm ---- \n"
+	#print maxterm
 
-	print "\n maxtermT \n"
-	print maxTermT
+	#print "\n maxtermT \n"
+	#print maxTermT
 
 
-	print "\n maxtermF \n"
-	print maxTermF
+	#print "\n maxtermF \n"
+	#print maxTermF
 
-	print "\n ----------------------"
+	#print "\n ----------------------"
 
 	if level==height:
 		

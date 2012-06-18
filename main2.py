@@ -4,15 +4,15 @@ import bdd
 
 #------- file read ---------------------------------------------
 
-f = open('absp2.pla','r')
-#f = open('blif_src/spla.pla','r')
-#f = open('blif_src/apex2.pla','r')
-#f = open('blif_src/seq.pla','r')
-#f = open('blif_src/ex1010.pla','r')
-#f = open('blif_src/pdc.pla','r')
-#f = open('blif_src/apex4.pla','r')
-#f = open('blif_src/misex3.pla','r')
-#f = open('blif_src/ex5.pla','r')
+#f = open('absp2.pla','r')
+#f = open('blif_src/spla.pla','r')		#i16
+f = open('blif_src/apex2.pla','r')		#i39
+#f = open('blif_src/seq.pla','r')		#i41
+#f = open('blif_src/ex1010.pla','r')	#i10
+#f = open('blif_src/pdc.pla','r')		#16
+#f = open('blif_src/apex4.pla','r')		#i9
+#f = open('blif_src/misex3.pla','r')	#i14
+#f = open('blif_src/ex5.pla','r')		#i8
 
 
 content = f.readlines()
@@ -64,9 +64,11 @@ print maxtermArray[0]
 
 resultTree = bdd.doShannon(maxtermArray[0],1, inputs)
 
-print type(resultTree)
+#print type(resultTree)
 #print resultTree
-resultTree.dotPrint2()
+
+#resultTree.makeQRBDD()
+#resultTree.dotPrint2()
 
 
 '''
