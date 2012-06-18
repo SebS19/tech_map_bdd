@@ -73,6 +73,9 @@ class Maxterm(object):
 
 	def __len__(self):
 		return len(self.__content)
+
+	def __eq__(self, maxterm):
+		return self.__content == maxterm	
 	
 	# make Maxterm iterable
 	def __iter__(self):

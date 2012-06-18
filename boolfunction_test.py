@@ -70,6 +70,7 @@ c = copy.deepcopy(tmp)
 print "\nIf x5=false:"
 c.setLiteralFalse('x5')
 print c
+print c==c
 
 c = copy.deepcopy(tmp)
 print "\nIf x1=false and x3=false and x4=true:"
@@ -77,3 +78,4 @@ c.setLiteralFalse('x1')
 c.setLiteralFalse('x3')
 c.setLiteralTrue('x4')
 print c
+print c==[1] 
