@@ -4,14 +4,14 @@ import bdd
 
 #------- file read ---------------------------------------------
 
-#f = open('absp2.pla','r')
+f = open('absp2.pla','r')
 #f = open('blif_src/spla.pla','r')		#i16
-f = open('blif_src/apex2.pla','r')		#i39
+#f = open('blif_src/apex2.pla','r')		#i39
 #f = open('blif_src/seq.pla','r')		#i41
-#f = open('blif_src/ex1010.pla','r')	#i10
-#f = open('blif_src/pdc.pla','r')		#16
+#f = open('blif_src/ex1010.pla','r')		#i10
+#f = open('blif_src/pdc.pla','r')		#i6
 #f = open('blif_src/apex4.pla','r')		#i9
-#f = open('blif_src/misex3.pla','r')	#i14
+#f = open('blif_src/misex3.pla','r')		#i14
 #f = open('blif_src/ex5.pla','r')		#i8
 
 
@@ -68,7 +68,7 @@ resultTree = bdd.doShannon(maxtermArray[0],1, inputs)
 #print resultTree
 
 #resultTree.makeQRBDD()
-#resultTree.dotPrint2()
+resultTree.dotPrint2()
 
 
 '''
