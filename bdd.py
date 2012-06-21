@@ -223,6 +223,7 @@ def doShannon(maxterm, level, height):
 
 
 	maxTermT = copy.deepcopy(maxterm)
+	#maxTermT = maxterm
 	maxTermF = copy.deepcopy(maxterm)
 
 	# shannon expansion
