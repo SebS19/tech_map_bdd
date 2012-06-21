@@ -7,6 +7,7 @@ import cProfile
 #------- file read ---------------------------------------------
 
 #f = open('absp2.pla','r')
+#f = open('absp_i28.pla','r')			#i28
 #f = open('blif_src/spla.pla','r')		#i16
 f = open('blif_src/apex2.pla','r')		#i39
 #f = open('blif_src/seq.pla','r')		#i41

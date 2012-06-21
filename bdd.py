@@ -1,6 +1,7 @@
 import commands
 import copy
-from basicfunctions import flatten_tuple
+# from basicfunctions import flatten_tuple
+import boolfunction as bf
 
 class Node(object):
 
@@ -222,9 +223,25 @@ def getHeight(rootNode):
 def doShannon(maxterm, level, height):
 
 
-	maxTermT = copy.deepcopy(maxterm)
-	#maxTermT = maxterm
-	maxTermF = copy.deepcopy(maxterm)
+	# maxTermT = copy.deepcopy(maxterm)
+	maxTermT = maxterm
+	# maxTermF = copy.deepcopy(maxterm)
+	
+	### auxiliary function to avoid deepcopy (bottleneck)
+	# if maxterm is just [0] or [1] do not call for-loop
+	if(maxterm == [0]):
+		maxTermF = bf.Maxterm()
+		maxTermF.setTrue()
+	elif(maxterm == [1]):
+		maxTermF = bf.Maxterm()
+		maxTermF.setFalse()
+	else:
+		maxTermF = bf.Maxterm()
+		for terms in maxterm:
+			minterm_temp = bf.Minterm()
+			minterm_content_temp = terms.content()[:]
+			minterm_temp.setContent(minterm_content_temp)
+			maxTermF.addMinterm(minterm_temp)
 
 	# shannon expansion
 	maxTermT.setLiteralTrue( 'x' + str(level))

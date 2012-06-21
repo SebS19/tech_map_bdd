@@ -59,6 +59,9 @@ class Minterm(object):
 			self.__content = [0]
 		return
 
+	# define minterm
+	def setContent(self, minterm):
+		self.__content = minterm
 	
 # Maxterm is a array of minterms
 class Maxterm(object):
@@ -153,6 +156,12 @@ class Maxterm(object):
 		if (self.isEmpty()):
 			self.__content = [0]
 		return 
+
+	def setTrue(self):
+		self.__content == [1]
+
+	def setFalse(self):
+		self.__content == [0]
 
 def buildMinterm(stringInput):
 	newMinterm 		= Minterm()
