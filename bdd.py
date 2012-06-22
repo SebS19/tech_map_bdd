@@ -1,6 +1,6 @@
 import commands
 import copy
-# from basicfunctions import flatten_tuple
+from basicfunctions import flatten_tuple
 import boolfunction as bf
 
 class Node(object):
@@ -143,50 +143,12 @@ class Node(object):
 	
 	def dotPrint2(self):
 		datei = open("graph.dot","w")
-		datei.write("digraph G { \n" + "graph [fontsize=24];\n" + "edge  [fontsize=24];\n" + "node  [fontsize=24];\n" + "ranksep = 1.5;\n" + "nodesep = .25;\n" + 'edge [style="setlinewidth(3)"];\n' +  'size="5,8";\n' + "rotate=90;\n" "center=1;\n" + self.dotPrint() + "\n}")
+#		datei.write("digraph G { \n" + "graph [fontsize=24];\n" + "edge  [fontsize=24];\n" + "node  [fontsize=24];\n" + "ranksep = 1.5;\n" + "nodesep = .25;\n" + 'edge [style="setlinewidth(3)"];\n' +  'size="5,8";\n' + "rotate=90;\n" "center=1;\n" + self.dotPrint() + "\n}")
+		datei.write("digraph G { \n" + "graph [fontsize=24];\n" + self.dotPrint() + "\n}")
 		datei.close()
 		commands.getstatusoutput('dot -Tps graph.dot -o graph.ps')
 		commands.getstatusoutput('ps2pdf graph.ps')
 		return #"digraph G { \n" + self.dotPrint() + "\n}"
-
-
-
-
-def adjust(stringInput, rootNode):
-	currentNode 	= rootNode
-	currentDepth 	= 0
-	# getting the last variable node
-	for literal in stringInput[:-1]:
-		currentDepth += 1	
-		if literal == '1':
-			currentNode = currentNode.trueNode
-		elif literal == '0':
-			currentNode = currentNode.falseNode
-		elif literal == '-':
-			adjust(stringInput[currentDepth:], currentNode.trueNode)
-			adjust(stringInput[currentDepth:], currentNode.falseNode)
-			return
-
-	# setting the leaves
-	if stringInput[-1] == '1' or stringInput[-1] == '-':	
-		currentNode.setTrueNode(Node.T)
-	if stringInput[-1] == '0' or stringInput[-1] == '-':	
-		currentNode.setFalseNode(Node.T)
-
-def createTree(n):
-	
-	subTree = Node('x1', Node.F, Node.F)
-	k=2
-
-	while n > 1:
-		a = copy.deepcopy(subTree)
-		b = copy.deepcopy(subTree)
-		tree 	= Node('x%i' %k, a, b)
-		subTree = tree
-		k+=1
-		n-=1
-
-	return tree
 
 def bddToBlif(rootNode):
 	stringOutput = ''
@@ -218,6 +180,29 @@ def getHeight(rootNode):
 		return 1
 	else:
 		return getHeight(rootNode.trueNode) + 1
+
+# returns the combatibilty My depending on the chosen tree level or with other words the number of the nodes x_i for a chosen i
+def getMy(rootNode, level):
+	global arrayOfNodes
+	my = len(getArrayOfLvlNodes(rootNode, level))
+	arrayOfNodes = []
+	return my 
+
+
+arrayOfNodes = []
+
+def getArrayOfLvlNodes(rootNode, level):
+	global arrayOfNodes
+
+	if(level == 1 and not(rootNode in arrayOfNodes)):
+		arrayOfNodes.append(rootNode)	
+	else:
+		if(type(rootNode.trueNode) == Node):
+			getArrayOfLvlNodes(rootNode.trueNode, level-1)
+		if(type(rootNode.falseNode) == Node):
+			getArrayOfLvlNodes(rootNode.falseNode, level-1)
+
+	return arrayOfNodes
 
 
 def doShannon(maxterm, level, height):

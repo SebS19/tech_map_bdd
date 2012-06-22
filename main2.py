@@ -6,10 +6,10 @@ import cProfile
 
 #------- file read ---------------------------------------------
 
-#f = open('absp2.pla','r')
+f = open('absp2.pla','r')
 #f = open('absp_i28.pla','r')			#i28
 #f = open('blif_src/spla.pla','r')		#i16
-f = open('blif_src/apex2.pla','r')		#i39
+#f = open('blif_src/apex2.pla','r')		#i39
 #f = open('blif_src/seq.pla','r')		#i41
 #f = open('blif_src/ex1010.pla','r')		#i10
 #f = open('blif_src/pdc.pla','r')		#i6
@@ -40,7 +40,7 @@ for line in content2:
 	if line[0] == '.o':
 		outputs = int(line[1][:-1])
 	
-	if line[0][0] != '.' and len(line) == 2:
+	if line[0][0] != '.' and len(line) >= 2:
 		equations.append([ line[0] , line[1][:-1]])
 
 
@@ -67,15 +67,15 @@ print maxtermArray[0]
 
 
 
-#resultTree = bdd.doShannon(maxtermArray[0],1, inputs)
+resultTree = bdd.doShannon(maxtermArray[0],1, inputs)
 
-cProfile.run("bdd.doShannon(maxtermArray[0],1, inputs)")
+#cProfile.run("bdd.doShannon(maxtermArray[0],1, inputs)")
 
 #print type(resultTree)
 #print resultTree
 
-#resultTree.makeQRBDD()
-#resultTree.dotPrint2()
+resultTree.makeQRBDD()
+resultTree.dotPrint2()
 
 
 '''
