@@ -11,10 +11,10 @@ import cProfile
 #f = open('blif_src/spla.pla','r')		#i16
 #f = open('blif_src/apex2.pla','r')		#i39
 #f = open('blif_src/seq.pla','r')		#i41
-#f = open('blif_src/ex1010.pla','r')		#i10
+f = open('blif_src/ex1010.pla','r')		#i10
 #f = open('blif_src/pdc.pla','r')		#i6
 #f = open('blif_src/apex4.pla','r')		#i9
-f = open('blif_src/misex3.pla','r')		#i14
+#f = open('blif_src/misex3.pla','r')		#i14
 #f = open('blif_src/ex5.pla','r')		#i8
 
 
@@ -63,22 +63,24 @@ for line in equations:
 
 
 
-print maxtermArray[0]
+#print maxtermArray[0]
 
 
 
+print "\nCreating tree",
 resultTree = bdd.doShannon(maxtermArray[0],1, inputs)
 
 #cProfile.run("bdd.doShannon(maxtermArray[0],1, inputs)")
 
 #print type(resultTree)
-print resultTree
+#print resultTree
 
+print "\n\nCreating QRBDD"
 resultTree.makeQRBDD()
 resultTree.dotPrint2()
 
 # my for each level
-print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+print "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 print "'My' for each height:"
 for levels in range(inputs):
 	print "Level",levels+1,":",bdd.getMy(resultTree,levels+1)

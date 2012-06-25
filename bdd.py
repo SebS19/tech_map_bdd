@@ -2,6 +2,7 @@ import commands
 import copy
 from basicfunctions import flatten_tuple
 import boolfunction as bf
+import sys
 
 class Node(object):
 
@@ -253,6 +254,7 @@ def doShannon(maxterm, level, height):
 		elif maxTermT == [1] and maxTermF == [0]:
 			return Node('x'+str(level), Node.T, Node.F)
 		elif maxTermT == [1] and maxTermF == [1]:
+			sys.stdout.write(".")
 			return Node('x'+str(level), Node.T, Node.T)
 		else:
 			raise SyntaxError("irgendwas stimmt nicht")
