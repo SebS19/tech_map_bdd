@@ -1,6 +1,7 @@
 import boolfunction as bf
 import copy
 import bdd
+import math
 
 import cProfile
 
@@ -11,9 +12,9 @@ import cProfile
 #f = open('blif_src/spla.pla','r')		#i16
 #f = open('blif_src/apex2.pla','r')		#i39
 #f = open('blif_src/seq.pla','r')		#i41
-f = open('blif_src/ex1010.pla','r')		#i10
+#f = open('blif_src/ex1010.pla','r')		#i10
 #f = open('blif_src/pdc.pla','r')		#i6
-#f = open('blif_src/apex4.pla','r')		#i9
+f = open('blif_src/apex4.pla','r')		#i9
 #f = open('blif_src/misex3.pla','r')		#i14
 #f = open('blif_src/ex5.pla','r')		#i8
 
@@ -54,7 +55,7 @@ for i in range(outputs):
 
 for line in equations:
 
-	for output in range(1):			# for every output
+	for output in range(2):			# for every output
 
 		if line[1][output] == '1':			# select the line with an 1 at the end to create the minterm
 			print line[0]
@@ -68,7 +69,7 @@ for line in equations:
 
 
 print "\nCreating tree",
-resultTree = bdd.doShannon(maxtermArray[0],1, inputs)
+resultTree = bdd.doShannon(maxtermArray[1],1, inputs)
 
 #cProfile.run("bdd.doShannon(maxtermArray[0],1, inputs)")
 
@@ -83,7 +84,10 @@ resultTree.dotPrint2()
 print "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 print "'My' for each height:"
 for levels in range(inputs):
-	print "Level",levels+1,":",bdd.getMy(resultTree,levels+1)
+	my = bdd.getMy(resultTree,levels+1)
+	print "Level",levels+1,":", my
+	gain = levels+1 - int(math.ceil(math.log(my,2)))
+ 	print "Gain:", gain
 
 '''
 # Example for shannon expansion
