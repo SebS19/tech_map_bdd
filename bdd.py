@@ -206,8 +206,8 @@ def getArrayOfLvlNodes(rootNode, level):
 	return arrayOfNodes
 
 
-def doShannon(maxterm, level, height):
-
+def doShannon(maxterm, level, height, expansionOrder):
+	# expansionOrder is a list of integers which symbolize the variable indeces sorted by weight
 
 	# maxTermT = copy.deepcopy(maxterm)
 	maxTermT = maxterm
@@ -230,8 +230,8 @@ def doShannon(maxterm, level, height):
 			maxTermF.addMinterm(minterm_temp)
 
 	# shannon expansion
-	maxTermT.setLiteralTrue( 'x' + str(level))
-	maxTermF.setLiteralFalse('x' + str(level))
+	maxTermT.setLiteralTrue( 'x' + str(expansionOrder[level-1]))
+	maxTermF.setLiteralFalse('x' + str(expansionOrder[level-1]))
 
 	#print "--- aktueller maxTerm ---- \n"
 	#print maxterm
@@ -248,24 +248,24 @@ def doShannon(maxterm, level, height):
 	if level==height:
 		
 		if maxTermT == [0] and maxTermF == [0]:
-			return Node('x'+str(level), Node.F, Node.F)
+			return Node('x'+str(expansionOrder[level-1]), Node.F, Node.F)
 		elif maxTermT == [0] and maxTermF == [1]:
-			return Node('x'+str(level), Node.F, Node.T)
+			return Node('x'+str(expansionOrder[level-1]), Node.F, Node.T)
 		elif maxTermT == [1] and maxTermF == [0]:
-			return Node('x'+str(level), Node.T, Node.F)
+			return Node('x'+str(expansionOrder[level-1]), Node.T, Node.F)
 		elif maxTermT == [1] and maxTermF == [1]:
 			sys.stdout.write(".")
-			return Node('x'+str(level), Node.T, Node.T)
+			return Node('x'+str(expansionOrder[level-1]), Node.T, Node.T)
 		else:
 			raise SyntaxError("irgendwas stimmt nicht")
 	
 	else:
 		
 		if maxTermF == maxTermT:
-			temp = doShannon(maxTermF,level+1, height)
-			return Node('x' + str(level), temp, temp)
+			temp = doShannon(maxTermF,level+1, height, expansionOrder)
+			return Node('x' + str(expansionOrder[level-1]), temp, temp)
 		else:
-			return Node('x' + str(level), doShannon(maxTermT,level+1,height), doShannon(maxTermF, level+1,height) )
+			return Node('x' + str(expansionOrder[level-1]), doShannon(maxTermT,level+1,height,expansionOrder), doShannon(maxTermF, level+1,height,expansionOrder) )
 
 
 

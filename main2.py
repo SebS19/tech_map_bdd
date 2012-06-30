@@ -2,6 +2,7 @@ import boolfunction as bf
 import copy
 import bdd
 import math
+from operator import itemgetter		# to sort dictionary of weight values
 
 import cProfile
 
@@ -14,8 +15,8 @@ import cProfile
 #f = open('blif_src/seq.pla','r')		#i41
 #f = open('blif_src/ex1010.pla','r')		#i10
 #f = open('blif_src/pdc.pla','r')		#i6
-f = open('blif_src/apex4.pla','r')		#i9
-#f = open('blif_src/misex3.pla','r')		#i14
+#f = open('blif_src/apex4.pla','r')		#i9
+f = open('blif_src/misex3.pla','r')		#i14
 #f = open('blif_src/ex5.pla','r')		#i8
 
 
@@ -50,26 +51,58 @@ for line in content2:
 print "BLIF input On set:"
 
 maxtermArray = []
+
 for i in range(outputs):
 	maxtermArray.append(bf.Maxterm(i))					# 0 is index, increment for every output 
 
-for line in equations:
+for output in range(2):			# for every output
+	equations_ONset = []								# only ON set equations
+	equations_NumberOfCares = []							# gives a number for each line, which indicates how many 0s or 1s are included
 
-	for output in range(2):			# for every output
+	for line in equations:
+	
+	
+			if line[1][output] == '1':			# select the line with an 1 at the end to create the minterm
+				print line[0]
+				equations_ONset.append(line[0])
+				tempCareCounter = 0	
+				for position in range(inputs):
+					if (line[0][position] == '0' or line[0][position] == '1'):
+						tempCareCounter += 1
+				equations_NumberOfCares.append(float(tempCareCounter))
 
-		if line[1][output] == '1':			# select the line with an 1 at the end to create the minterm
-			print line[0]
-			maxtermArray[output].addMinterm(bf.buildMinterm(line[0]))
+	#------- sort inputs depending on variable weights ----------------
+	weight_dic = {}						# dictionary in the form of {'x1': 0.7337, 'x2': 0.1234, ... }
+	numberOfLines = float(len(equations_ONset))
+	
+	# all values to zero
+	for i in range(inputs):
+		weight_dic['x' + str(i+1)]=0
+	# update weigth for each variable
+	for i in range(inputs):
+		for index, line in enumerate(equations_ONset):
+			if(line[i] == '0' or line[i] == '1'):
+				weight_dic['x' + str(i+1)] += 1.0/equations_NumberOfCares[index] * 1.0/numberOfLines
+	
+	# sort weight_dic
+	weight_dic = sorted(weight_dic.items(), key=itemgetter(1))	# notice that dictionary becomes a list of tuples now
 
+	# weight list becomes a list of variable indeces in sorted order [9, 3, ...]
+	weight_dic_int = []
+	for var in weight_dic:
+		weight_dic_int.append(int(var[0][1:]))
+	# lowest value at the beginning -> must be reversed
+	weight_dic_int.reverse()
 
+	# finally build the maxterm
+	for line in equations_ONset:
+		maxtermArray[output].addMinterm(bf.buildMinterm(line))
+	
 
-
-#print maxtermArray[0]
-
-
+#-------- building tree -----------------------------------------
 
 print "\nCreating tree",
-resultTree = bdd.doShannon(maxtermArray[1],1, inputs)
+resultTree = bdd.doShannon(maxtermArray[1],1, inputs, weight_dic_int)
 
 #cProfile.run("bdd.doShannon(maxtermArray[0],1, inputs)")
 
@@ -86,7 +119,7 @@ print "'My' for each height:"
 for levels in range(inputs):
 	my = bdd.getMy(resultTree,levels+1)
 	print "Level",levels+1,":", my
-	gain = levels+1 - int(math.ceil(math.log(my,2)))
+	gain = levels - int(math.ceil(math.log(my,2)))
  	print "Gain:", gain
 
 '''
