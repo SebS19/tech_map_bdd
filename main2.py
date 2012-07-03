@@ -1,13 +1,14 @@
 import boolfunction as bf
 import bdd
 import math
+import basicfunctions as bas
 from operator import itemgetter		# to sort dictionary of weight values
 
 import cProfile
 
 #------- file read ---------------------------------------------
 
-f = open('absp2.pla','r')
+#f = open('absp2.pla','r')
 #f = open('absp_i28.pla','r')			#i28
 #f = open('blif_src/spla.pla','r')		#i16
 #f = open('blif_src/apex2.pla','r')		#i39
@@ -15,11 +16,11 @@ f = open('absp2.pla','r')
 #f = open('blif_src/ex1010.pla','r')		#i10
 #f = open('blif_src/pdc.pla','r')		#i16
 #f = open('blif_src/apex4.pla','r')		#i9
-f = open('blif_src/misex3.pla','r')		#i14
-#f = open('blif_src/ex5.pla','r')		#i8
+#f = open('blif_src/misex3.pla','r')		#i14
+f = open('blif_src/ex5.pla','r')		#i8
 
 # define your k here
-k = 7 
+k = 3 
 
 content = f.readlines()
 f.close()
@@ -120,24 +121,41 @@ for levels in range(1,inputs):
 		ldmy = 1
 	setOfLdMy.append(ldmy)
 
-resultTree.dotPrint2()
 print "\n... creating LUT structure" 
 
 lutstruc = resultTree.doNaiveDecomp(k, weight_dic_int, setOfLdMy)
 print "\nChosen %s-LUT structure:" %k
 print lutstruc
 
+# test start #
+lvlNodes = bdd.getArrayOfLvlNodes(resultTree,5)
+resultTree.cutTreeAtHeight(4, lvlNodes)
+# test end #
+resultTree.dotPrint2()
 
 
 
-# my for each level
-print "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-print "'My' for each height:"
-for levels in range(1,inputs):
-	my = bdd.getMy(resultTree,levels+1)
-	print "Level",levels,":", my
-	gain = levels - int(math.ceil(math.log(my,2)))
- 	print "Gain:", gain
+#------write BLIF file ------------------------------------------
+print "\n... creating BLIF file"
+
+# note: every list has k elements; elements which arent integers are at the end
+templutstruc = lutstruc
+# first iterate to deepest list
+while (bas.count_lists(templutstruc) != 0):
+	templutstruc = templutstruc[k-1]
+
+print "\nDone."
+
+
+
+## my for each level
+#print "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+#print "'My' for each height:"
+#for levels in range(1,inputs):
+#	my = bdd.getMy(resultTree,levels+1)
+#	print "Level",levels,":", my
+#	gain = levels - int(math.ceil(math.log(my,2)))
+# 	print "Gain:", gain
 
 '''
 # Example for shannon expansion

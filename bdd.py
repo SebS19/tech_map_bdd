@@ -1,8 +1,6 @@
 import commands
-import copy
-from basicfunctions import flatten_tuple
+import basicfunctions as bas
 import boolfunction as bf
-import sys
 import math
 
 class DecompositionError(Exception):
@@ -179,11 +177,12 @@ class Node(object):
 		
 		# exit condition
 		if(cutPosition < k):
+			variableOrder.reverse()		# just to keep the order of the LUT structure consistently
 			nestedLUTstruct=variableOrder
 			return nestedLUTstruct
 	
 		# add variables to free set until all ports are assigned
-		whileLoopEntered = False						# boolean variable to check if it is possible to assign further ports
+		whileLoopEntered = False						# boolean variable to check if it is actually possible to assign further ports
 		while   ( k >= treeHeight - cutPosition + setOfLdMy[cutPosition-1])  :
 			nestedLUTstruct.append(variableOrder[cutPosition])	
 			cutPosition -= 1
@@ -192,7 +191,7 @@ class Node(object):
 		# Check if tree is too wide for the given k
 		if(not(whileLoopEntered)):
 			if(k < 8):
-				print "\nExit status: Value of k is to low for the given PLA. Please increase!"
+				print "\nExit status: Value of k=%s is to low for the given PLA. Please increase!" %k
 			else:
 				print "\nYour problem is not feasible for k<=8."
 		        exit(1)
@@ -237,12 +236,27 @@ class Node(object):
 			nestedLUTstruct.extend([recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct])
 			return nestedLUTstruct
 		else:
-			raise DecompositionError("k has to be 0<k<9.")
+			print "k has to be 0<k<9."
+			exit(1)
 
+		
+	def cutTreeAtHeight(self, cutHeight, lvlNodes):
+		if(cutHeight < 1):
+			print "\nExit Status: wrong cut height for a certain subtree declared"
+		if(cutHeight == 1):
+				if(lvlNodes.index(self.trueNode) == 0):
+					self.setTrueNode(Node.T)
+				if(lvlNodes.index(self.trueNode) == 1):
+					self.setFalseNode(Node.F)
+		else:
+			self.trueNode.cutTreeAtHeight(cutHeight-1, lvlNodes)
+			self.falseNode.cutTreeAtHeight(cutHeight-1, lvlNodes)
+				
+				
 
 def bddToBlif(rootNode):
 	stringOutput = ''
-	arrayOnSetAll = flatten_tuple(getAllOnPaths(getHeight(rootNode), rootNode, ''))
+	arrayOnSetAll = bas.flatten_tuple(getAllOnPaths(getHeight(rootNode), rootNode))
 	arrayOnSetAll = filter (lambda x: x!=None, arrayOnSetAll)			# remove all None entries	
 
 	# converting array to blif string format
@@ -252,7 +266,7 @@ def bddToBlif(rootNode):
 	return stringOutput 
 	
 # auxiliary function to descend recursive through the tree and save all ways of the on set
-def getAllOnPaths(treeheight, rootNode, way):
+def getAllOnPaths(treeheight, rootNode, way=''):
 	# termination:
 	if treeheight == 0 and repr(rootNode)=='True':
 		return way
