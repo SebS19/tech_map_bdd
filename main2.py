@@ -1,5 +1,4 @@
 import boolfunction as bf
-import copy
 import bdd
 import math
 from operator import itemgetter		# to sort dictionary of weight values
@@ -8,21 +7,22 @@ import cProfile
 
 #------- file read ---------------------------------------------
 
-#f = open('absp2.pla','r')
+f = open('absp2.pla','r')
 #f = open('absp_i28.pla','r')			#i28
 #f = open('blif_src/spla.pla','r')		#i16
 #f = open('blif_src/apex2.pla','r')		#i39
 #f = open('blif_src/seq.pla','r')		#i41
 #f = open('blif_src/ex1010.pla','r')		#i10
-#f = open('blif_src/pdc.pla','r')		#i6
+#f = open('blif_src/pdc.pla','r')		#i16
 #f = open('blif_src/apex4.pla','r')		#i9
 f = open('blif_src/misex3.pla','r')		#i14
 #f = open('blif_src/ex5.pla','r')		#i8
 
+# define your k here
+k = 7 
 
 content = f.readlines()
 f.close()
-
 
 
 #------- splitting header / boundset / freeset  ---------------------
@@ -48,14 +48,13 @@ for line in content2:
 
 #------- create minterms from blif equations  ---------------------
 
-print "BLIF input On set:"
-
+outputs = 1	# delete if all outputs shall computed !!!!!
 maxtermArray = []
 
 for i in range(outputs):
-	maxtermArray.append(bf.Maxterm(i))					# 0 is index, increment for every output 
+	maxtermArray.append(bf.Maxterm(i))						# i is index, increment for every output 
 
-for output in range(2):			# for every output
+for output in range(outputs):									# for every output
 	equations_ONset = []								# only ON set equations
 	equations_NumberOfCares = []							# gives a number for each line, which indicates how many 0s or 1s are included
 
@@ -63,7 +62,7 @@ for output in range(2):			# for every output
 	
 	
 			if line[1][output] == '1':			# select the line with an 1 at the end to create the minterm
-				print line[0]
+				#print line[0]
 				equations_ONset.append(line[0])
 				tempCareCounter = 0	
 				for position in range(inputs):
@@ -101,24 +100,42 @@ for output in range(2):			# for every output
 
 #-------- building tree -----------------------------------------
 
-print "\nCreating tree",
-resultTree = bdd.doShannon(maxtermArray[1],1, inputs, weight_dic_int)
+print "\n... creating tree",
+resultTree = bdd.doShannon(maxtermArray[0],1, inputs, weight_dic_int)		# must be done for every output !!!!
 
 #cProfile.run("bdd.doShannon(maxtermArray[0],1, inputs)")
 
-#print type(resultTree)
 #print resultTree
 
-print "\n\nCreating QRBDD"
+print "\n\n... creating QRBDD"
 resultTree.makeQRBDD()
+
+#--------create LUT structure ------------------------------------
+# create ld(my) for every level (actually it is not ld(my), because every ld(my)=0 becomes ld(my)=1)
+setOfLdMy = []
+for levels in range(1,inputs):
+	ldmy = int(math.ceil(math.log(bdd.getMy(resultTree,levels+1),2)))
+	# ldmy gets modify if ldmy=0 -> necessary for doNaiveDecomp function
+	if(ldmy == 0):
+		ldmy = 1
+	setOfLdMy.append(ldmy)
+
 resultTree.dotPrint2()
+print "\n... creating LUT structure" 
+
+lutstruc = resultTree.doNaiveDecomp(k, weight_dic_int, setOfLdMy)
+print "\nChosen %s-LUT structure:" %k
+print lutstruc
+
+
+
 
 # my for each level
 print "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 print "'My' for each height:"
-for levels in range(inputs):
+for levels in range(1,inputs):
 	my = bdd.getMy(resultTree,levels+1)
-	print "Level",levels+1,":", my
+	print "Level",levels,":", my
 	gain = levels - int(math.ceil(math.log(my,2)))
  	print "Gain:", gain
 

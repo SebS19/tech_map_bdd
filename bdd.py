@@ -3,6 +3,14 @@ import copy
 from basicfunctions import flatten_tuple
 import boolfunction as bf
 import sys
+import math
+
+class DecompositionError(Exception):
+	def __init__(self, value):
+		self.__value__ = value
+	
+	def __str__(self):
+		return self.__value__
 
 class Node(object):
 
@@ -151,6 +159,87 @@ class Node(object):
 		commands.getstatusoutput('ps2pdf graph.ps')
 		return #"digraph G { \n" + self.dotPrint() + "\n}"
 
+
+
+	def doNaiveDecomp(self, k, variableOrder, setOfLdMy):
+	# returns a nested array which symbolizes the structure of the LUT chain, for example for k=3: [3,2, [1,[4,5,6],[4,5,6]] ] -> x2 and x3 are in the free set, remaining variables are in the bound set
+		
+		# variableOrder is an array with the form of [9, 3, 12, ...] as example (cardinality is number of inputs)
+		# setOfLdMy is an arary with the form of [1, 1, 2, 8, ..., 4, 2] as example (cardinality is number of inputs-1), elements with the form of 2**i
+		if(0 in setOfLdMy):
+			print "\nExit status: setOfLdMy must not contain 0 as element!"
+			exit(1)
+		if(k > 8):
+			print "\nExit Status: k > 8 not implemented"
+			exit(1)
+
+		nestedLUTstruct=[]
+		treeHeight = len(variableOrder)
+		cutPosition = len(setOfLdMy)
+		
+		# exit condition
+		if(cutPosition < k):
+			nestedLUTstruct=variableOrder
+			return nestedLUTstruct
+	
+		# add variables to free set until all ports are assigned
+		whileLoopEntered = False						# boolean variable to check if it is possible to assign further ports
+		while   ( k >= treeHeight - cutPosition + setOfLdMy[cutPosition-1])  :
+			nestedLUTstruct.append(variableOrder[cutPosition])	
+			cutPosition -= 1
+			whileLoopEntered = True
+
+		# Check if tree is too wide for the given k
+		if(not(whileLoopEntered)):
+			if(k < 8):
+				print "\nExit status: Value of k is to low for the given PLA. Please increase!"
+			else:
+				print "\nYour problem is not feasible for k<=8."
+		        exit(1)
+
+
+		# restore cutPosition
+		cutPosition += 1
+
+		# recursive cutting depending on ld(my)
+		currentLdMy = setOfLdMy[cutPosition-1]
+
+		if(currentLdMy == 1):
+			recursiveLUTstruct = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1]) 
+			nestedLUTstruct.append(recursiveLUTstruct)
+			return nestedLUTstruct
+		elif(currentLdMy == 2):
+			recursiveLUTstruct = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1]) 
+			nestedLUTstruct.extend([recursiveLUTstruct, recursiveLUTstruct])
+			return nestedLUTstruct
+		elif(currentLdMy == 3):
+			recursiveLUTstruct = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1]) 
+			nestedLUTstruct.extend([recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct])
+			return nestedLUTstruct
+		elif(currentLdMy == 4):
+			recursiveLUTstruct = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1]) 
+			nestedLUTstruct.extend([recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct])
+			return nestedLUTstruct
+		elif(currentLdMy == 5):
+			recursiveLUTstruct = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1]) 
+			nestedLUTstruct.extend([recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct])
+			return nestedLUTstruct
+		elif(currentLdMy == 6):
+			recursiveLUTstruct = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1]) 
+			nestedLUTstruct.extend([recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct])
+			return nestedLUTstruct
+		elif(currentLdMy == 7):
+			recursiveLUTstruct = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1]) 
+			nestedLUTstruct.extend([recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct])
+			return nestedLUTstruct
+		elif(currentLdMy == 8):
+			recursiveLUTstruct = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1]) 
+			nestedLUTstruct.extend([recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct])
+			return nestedLUTstruct
+		else:
+			raise DecompositionError("k has to be 0<k<9.")
+
+
 def bddToBlif(rootNode):
 	stringOutput = ''
 	arrayOnSetAll = flatten_tuple(getAllOnPaths(getHeight(rootNode), rootNode, ''))
@@ -254,7 +343,6 @@ def doShannon(maxterm, level, height, expansionOrder):
 		elif maxTermT == [1] and maxTermF == [0]:
 			return Node('x'+str(expansionOrder[level-1]), Node.T, Node.F)
 		elif maxTermT == [1] and maxTermF == [1]:
-			sys.stdout.write(".")
 			return Node('x'+str(expansionOrder[level-1]), Node.T, Node.T)
 		else:
 			raise SyntaxError("irgendwas stimmt nicht")
@@ -266,29 +354,3 @@ def doShannon(maxterm, level, height, expansionOrder):
 			return Node('x' + str(expansionOrder[level-1]), temp, temp)
 		else:
 			return Node('x' + str(expansionOrder[level-1]), doShannon(maxTermT,level+1,height,expansionOrder), doShannon(maxTermF, level+1,height,expansionOrder) )
-
-
-
-
-'''
-	if level == 0:
-		if maxterm == [1]:
-			return Node.T
-		if maxterm == [0]:
-			return Node.F
-		elif:
-			raise SyntaxError("wrong level specified, looser")
-
-	if maxterm == [1] or maxterm == [0]:
-		self.__trueNode  = makeChildNode(maxterm, level-1)
-		self.__falseNode = self.__trueNode
-
-	else:
-
-
-
-		self.__trueNode  = Node(	'x' + str(level),\
-									makeChildNode( maxTermT, level-1),\
-									makeChildNode( maxTermF, level-1) )
-		self.__falseNode =  
-'''
