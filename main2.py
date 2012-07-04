@@ -2,6 +2,7 @@ import boolfunction as bf
 import bdd
 import math
 import basicfunctions as bas
+import copy
 from operator import itemgetter		# to sort dictionary of weight values
 
 import cProfile
@@ -49,7 +50,7 @@ for line in content2:
 
 #------- create minterms from blif equations  ---------------------
 
-outputs = 1	# delete if all outputs shall computed !!!!!
+outputs = 1 	# comment if all outputs shall computed !!!!!
 maxtermArray = []
 
 for i in range(outputs):
@@ -102,7 +103,7 @@ for output in range(outputs):									# for every output
 #-------- building tree -----------------------------------------
 
 print "\n... creating tree",
-resultTree = bdd.doShannon(maxtermArray[0],1, inputs, weight_dic_int)		# must be done for every output !!!!
+resultTree = bdd.doShannon(maxtermArray[1],1, inputs, weight_dic_int)		# must be done for every output !!!!
 
 #cProfile.run("bdd.doShannon(maxtermArray[0],1, inputs)")
 
@@ -110,6 +111,12 @@ resultTree = bdd.doShannon(maxtermArray[0],1, inputs, weight_dic_int)		# must be
 
 print "\n\n... creating QRBDD"
 resultTree.makeQRBDD()
+
+
+
+
+
+
 
 #--------create LUT structure ------------------------------------
 # create ld(my) for every level (actually it is not ld(my), because every ld(my)=0 becomes ld(my)=1)
@@ -127,22 +134,89 @@ lutstruc = resultTree.doNaiveDecomp(k, weight_dic_int, setOfLdMy)
 print "\nChosen %s-LUT structure:" %k
 print lutstruc
 
-# test start #
-lvlNodes = bdd.getArrayOfLvlNodes(resultTree,5)
-resultTree.cutTreeAtHeight(4, lvlNodes)
-# test end #
-resultTree.dotPrint2()
+
+
 
 
 
 #------write BLIF file ------------------------------------------
 print "\n... creating BLIF file"
 
-# note: every list has k elements; elements which arent integers are at the end
+resultTree.dotPrint2()
+
+
+outputContent = ".model " + f.name.split('/')[-1].split('.')[0] + '_%s_feasible\n.inputs' %k
+for inVar in range(0,inputs):
+        outputContent += " x%s" %inVar
+outputContent += "\n.outputs"
+for outVar in range(0,outputs):
+        outputContent += " y%s" %outVar
+
+
+
+# note: every list of 'lutstruc' has k elements except of the deepest lists; elements which arent integers but lists are at the end
 templutstruc = lutstruc
 # first iterate to deepest list
+itdepth = 0
 while (bas.count_lists(templutstruc) != 0):
 	templutstruc = templutstruc[k-1]
+	itdepth += 1
+
+### INITIAL STEP
+tempTree = copy.deepcopy(resultTree)
+cutNodes = bdd.getArrayOfLvlNodes(resultTree, len(templutstruc)+1)
+tempTree.cutTreeAtHeight(len(templutstruc), cutNodes)
+
+outputContent += "\n.names"
+for initElem in range(len(templutstruc)):
+	outputContent += " x" + str(templutstruc[-1-initElem])
+outputContent += " h" + str(itdepth)
+
+outputContent += "\n" + bdd.bddToBlif(tempTree, 1)
+
+treelvl = len(templutstruc)
+
+itdepth -= 1
+
+### ITERATION
+base = 2	# = maximal ld(my), will be computed later
+while (itdepth != -1):
+	# first get the next sub-LUT structure
+	templutstruc = lutstruc
+	for depthlvl in range(itdepth):
+		templutstruc = templutstruc[-1]
+	#print "\ntemplutstruc:", templutstruc
+	
+	rootNodes = bdd.getArrayOfLvlNodes(resultTree, treelvl+1)
+	tempTree = copy.deepcopy(rootNodes[0])
+	cutNodes = bdd.getArrayOfLvlNodes(tempTree, k)
+	tempTree.cutTreeAtHeight(k-1, cutNodes)
+
+	if(itdepth == 0):
+		if(bdd.bddToBlif(tempTree,base) == ' 1' or bdd.bddToBlif(tempTree,base)):
+			outputContent += "\n.names " + "h" + str(itdepth+1) + " y" + str(outputs-1)
+		else:
+			outputContent += "\n.names " + "h" + str(itdepth+1) 
+			for itElem in range(k-1):
+				outputContent += " x" + str(templutstruc[-2-itElem])
+			outputContent += " y" + str(outputs-1)
+	else:
+		if(bdd.bddToBlif(tempTree, base) == ' 1'):
+			outputContent += "\n.names " + "h" + str(itdepth+1) + " h0" + str(itdepth) 
+		else:
+			outputContent += "\n.names " + "h" + str(itdepth+1)  
+			for itElem in range(k-1):
+				outputContent += " x" + str(templutstruc[-2-itElem])
+			outputContent += " h" + str(itdepth)
+
+	outputContent += '\n' + bdd.bddToBlif(tempTree, base)
+		
+	treelvl += (k-1) 
+	itdepth -=1
+
+print "____________________________________"
+print "BLIF file:"
+print outputContent
 
 print "\nDone."
 

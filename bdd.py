@@ -239,30 +239,57 @@ class Node(object):
 			print "k has to be 0<k<9."
 			exit(1)
 
-		
+
 	def cutTreeAtHeight(self, cutHeight, lvlNodes):
+	# currently just working for cuts with my=2 !!!
 		if(cutHeight < 1):
-			print "\nExit Status: wrong cut height for a certain subtree declared"
+			print "\nExit Status: wrong cut height for a certain subtree declared. Cut height reached %s." %cutHeight
+			exit(1)
+
 		if(cutHeight == 1):
+			if(type(self.trueNode) == Node):
 				if(lvlNodes.index(self.trueNode) == 0):
 					self.setTrueNode(Node.T)
-				if(lvlNodes.index(self.trueNode) == 1):
+				elif(lvlNodes.index(self.trueNode) == 1):
+					self.setTrueNode(Node.F)
+					
+			if(type(self.falseNode) == Node):
+				if(lvlNodes.index(self.falseNode) == 0):
+					self.setFalseNode(Node.T)
+				elif(lvlNodes.index(self.falseNode) == 1):
 					self.setFalseNode(Node.F)
-		else:
-			self.trueNode.cutTreeAtHeight(cutHeight-1, lvlNodes)
-			self.falseNode.cutTreeAtHeight(cutHeight-1, lvlNodes)
-				
-				
+			return 
 
-def bddToBlif(rootNode):
+		self.trueNode.cutTreeAtHeight(cutHeight-1, lvlNodes)
+		self.falseNode.cutTreeAtHeight(cutHeight-1, lvlNodes)
+				
+def bddToBlif(rootNode, base):
+	#base gives the my, which symbolizes the number of ones at the beginning of each line
 	stringOutput = ''
-	arrayOnSetAll = bas.flatten_tuple(getAllOnPaths(getHeight(rootNode), rootNode))
+	arrayOnSetAll = getAllOnPaths(getHeight(rootNode), rootNode)
+
+	# catch some exceptions here
+	if (type(arrayOnSetAll) == str):
+		arrayOnSetAll = [arrayOnSetAll]
+	elif (arrayOnSetAll == None):
+		if(base == 2):
+			return '1 1'
+		else:
+			return ' 1'
+	else:
+		arrayOnSetAll = bas.flatten_tuple(arrayOnSetAll)
 	arrayOnSetAll = filter (lambda x: x!=None, arrayOnSetAll)			# remove all None entries	
 
 	# converting array to blif string format
 	for minterm in arrayOnSetAll[:-1]:
-		stringOutput += minterm + " 1" + '\n'
-	stringOutput += arrayOnSetAll[-1] + " 1"					# last line without newline at the end
+		if (base == 2):
+			stringOutput += "1" + minterm + " 1" + '\n'
+		else:
+			stringOutput += minterm + " 1" + '\n'
+	if (base == 2):
+		stringOutput += "1" + arrayOnSetAll[-1] + " 1"					# last line without newline at the end
+	else:
+		stringOutput += arrayOnSetAll[-1] + " 1"					# last line without newline at the end
 	return stringOutput 
 	
 # auxiliary function to descend recursive through the tree and save all ways of the on set
@@ -297,14 +324,19 @@ arrayOfNodes = []
 
 def getArrayOfLvlNodes(rootNode, level):
 	global arrayOfNodes
+	tempArray = getArrayOfLvlNodesAUX(rootNode, level)
+	arrayOfNodes = []
+	return tempArray
 
+def getArrayOfLvlNodesAUX(rootNode, level):
+	global arrayOfNodes
 	if(level == 1 and not(rootNode in arrayOfNodes)):
 		arrayOfNodes.append(rootNode)	
 	else:
 		if(type(rootNode.trueNode) == Node):
-			getArrayOfLvlNodes(rootNode.trueNode, level-1)
+			getArrayOfLvlNodesAUX(rootNode.trueNode, level-1)
 		if(type(rootNode.falseNode) == Node):
-			getArrayOfLvlNodes(rootNode.falseNode, level-1)
+			getArrayOfLvlNodesAUX(rootNode.falseNode, level-1)
 
 	return arrayOfNodes
 
