@@ -52,6 +52,7 @@ for line in content2:
 
 outputs = 1 	# comment if all outputs shall computed !!!!!
 maxtermArray = []
+variableOrderArray = []
 
 for i in range(outputs):
 	maxtermArray.append(bf.Maxterm(i))						# i is index, increment for every output 
@@ -95,7 +96,10 @@ for output in range(outputs):									# for every output
 	# lowest value at the beginning -> must be reversed
 	weight_dic_int.reverse()
 
-	# finally build the maxterm
+	# add the initial order to an array
+	variableOrderArray.append(weight_dic_int)
+
+	# finally build	 the maxterm
 	for line in equations_ONset:
 		maxtermArray[output].addMinterm(bf.buildMinterm(line))
 	
@@ -103,7 +107,7 @@ for output in range(outputs):									# for every output
 #-------- building tree -----------------------------------------
 
 print "\n... creating tree",
-resultTree = bdd.doShannon(maxtermArray[1],1, inputs, weight_dic_int)		# must be done for every output !!!!
+resultTree = bdd.doShannon(maxtermArray[0],1, inputs, weight_dic_int)		# must be done for every output !!!!
 
 #cProfile.run("bdd.doShannon(maxtermArray[0],1, inputs)")
 
@@ -111,8 +115,6 @@ resultTree = bdd.doShannon(maxtermArray[1],1, inputs, weight_dic_int)		# must be
 
 print "\n\n... creating QRBDD"
 resultTree.makeQRBDD()
-
-
 
 
 
@@ -130,6 +132,7 @@ for levels in range(1,inputs):
 
 print "\n... creating LUT structure" 
 
+# here comes the actual decomposition algorithm which returns just an array of arrays/integers
 lutstruc = resultTree.doNaiveDecomp(k, weight_dic_int, setOfLdMy)
 print "\nChosen %s-LUT structure:" %k
 print lutstruc
@@ -166,6 +169,7 @@ while (bas.count_lists(templutstruc) != 0):
 tempTree = copy.deepcopy(resultTree)
 cutNodes = bdd.getArrayOfLvlNodes(resultTree, len(templutstruc)+1)
 tempTree.cutTreeAtHeight(len(templutstruc), cutNodes)
+print "Temptree:",tempTree
 
 outputContent += "\n.names"
 for initElem in range(len(templutstruc)):
@@ -191,6 +195,7 @@ while (itdepth != -1):
 	tempTree = copy.deepcopy(rootNodes[0])
 	cutNodes = bdd.getArrayOfLvlNodes(tempTree, k)
 	tempTree.cutTreeAtHeight(k-1, cutNodes)
+	print "Temptree:",tempTree
 
 	if(itdepth == 0):
 		if(bdd.bddToBlif(tempTree,base) == ' 1' or bdd.bddToBlif(tempTree,base)):
