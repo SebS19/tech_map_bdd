@@ -72,8 +72,8 @@ class Node(object):
 
 	def makeQRBDD(self):
 
-		compareSet=[self]
-		compareNode=self
+		compareSet  = [self]
+		compareNode = self
 
 		while type(compareNode.trueNode) == Node:
 
@@ -291,6 +291,7 @@ def bddToBlif(rootNode, base):
 	else:
 		stringOutput += arrayOnSetAll[-1] + " 1"					# last line without newline at the end
 	return stringOutput 
+
 	
 # auxiliary function to descend recursive through the tree and save all ways of the on set
 def getAllOnPaths(treeheight, rootNode, way=''):
@@ -319,7 +320,6 @@ def getMy(rootNode, level):
 	arrayOfNodes = []
 	return my 
 
-
 arrayOfNodes = []
 
 def getArrayOfLvlNodes(rootNode, level):
@@ -339,7 +339,6 @@ def getArrayOfLvlNodesAUX(rootNode, level):
 			getArrayOfLvlNodesAUX(rootNode.falseNode, level-1)
 
 	return arrayOfNodes
-
 
 def doShannon(maxterm, level, height, expansionOrder):
 	# expansionOrder is a list of integers which symbolize the variable indeces sorted by weight
@@ -400,3 +399,26 @@ def doShannon(maxterm, level, height, expansionOrder):
 			return Node('x' + str(expansionOrder[level-1]), temp, temp)
 		else:
 			return Node('x' + str(expansionOrder[level-1]), doShannon(maxTermT,level+1,height,expansionOrder), doShannon(maxTermF, level+1,height,expansionOrder) )
+
+
+def countNodes(rootNode):
+
+	counter   = 0
+
+	countSet  = [rootNode]
+	checkNode = rootNode
+
+	while type(checkNode.trueNode) == Node:
+
+		counter 	= counter + len(set(countSet)) 
+		checkNode 	= countSet[0]
+		rootNodes	= countSet[:]
+
+		countSet	= []
+
+		for knoten in rootNodes:
+			
+			countSet.append(knoten.falseNode)
+			countSet.append(knoten.trueNode)
+
+	return counter
