@@ -1,7 +1,9 @@
 import commands
-import basicfunctions as bas
-import boolfunction as bf
+import basicfunctions 	as bas
+import boolfunction		as bf
 import math
+from copy import copy
+from operator import itemgetter
 
 class DecompositionError(Exception):
 	def __init__(self, value):
@@ -26,15 +28,24 @@ class Node(object):
 	T = __TrueNode()
 	F = __FalseNode()
 
-	# constructor 
-
+	
+	###############
+	# constructor #
+	###############
+	
 	def __init__(self, variable, trueNode, falseNode):
 		self.__variable 	= variable
 		self.__trueNode 	= trueNode
 		self.__falseNode 	= falseNode
+		
+		# attribute needed for sifting
+		self.__level		= 0
 
+	
 
-	# getter (without the need of "()") for private variables
+	##########
+	# getter #
+	##########
 
 	@property
 	def trueNode(self):
@@ -48,9 +59,13 @@ class Node(object):
 	def variable(self):
 		return self.__variable
 
-	# defining the textual representation of a node (keep in mind that this is a recursion)
-	def __repr__(self):
-		return  "Node("+ repr(self.__variable) + ":" + repr(self.__trueNode) + "|" + repr(self.__falseNode) + ")"
+	@property 
+	def level(self):
+		return self.__level
+
+	##########
+	# setter #
+	##########
 
 	
 	def setTrueNode(self,newNode):
@@ -58,6 +73,23 @@ class Node(object):
 
 	def setFalseNode(self,newNode):
 		self.__falseNode = newNode
+
+	def setLevel(self,newLevel):
+		self.__level 	= newLevel
+
+	def setVariable(self,variable):
+		self.__variable = variable
+
+
+	#####################
+	# function overload #
+	#####################
+
+
+	# defining the textual representation of a node (keep in mind that this is a recursion)
+	def __repr__(self):
+		return  "Node("+ repr(self.__variable) + ":" + repr(self.__trueNode) + "|" + repr(self.__falseNode) + ")"
+
 
 	def __eq__(self, otherNode):
 		if self.__variable == otherNode.variable:
@@ -68,7 +100,10 @@ class Node(object):
 		else:
 			return False
 
-
+	
+	##########################################
+	# some very cool implicit tree functions #
+	##########################################
 
 	def makeQRBDD(self):
 
@@ -131,7 +166,7 @@ class Node(object):
 
 			for knoten in nodeList:
 				
-				outputString += str(id(knoten))  + ' [label="%s"]' %knoten.variable + "\n"
+				outputString += str(id(knoten))  + ' [label="%s (%s)"]' %(knoten.variable,knoten.level) + "\n"
 				outputString += str(id(knoten))  + "->" + str(id(knoten.falseNode)) + "[style=dotted] \n"
 				outputString += str(id(knoten))  + "->" + str(id(knoten.trueNode))  + "\n"
 
@@ -151,16 +186,15 @@ class Node(object):
 	def dotPrint2(self):
 		datei = open("graph.dot","w")
 		datei.write("digraph G { \n" + "graph [fontsize=24];\n" + "edge  [fontsize=24];\n" + "node  [fontsize=24];\n" + "ranksep = 1.5;\n" + "nodesep = .25;\n" + 'edge [style="setlinewidth(3)"];\n' +  'size="2,4";\n' + "rotate=90;\n" "center=1;\n" + self.dotPrint() + "\n}")
-	#	datei.write("digraph G { \n" + "graph [fontsize=24];\n" + self.dotPrint() + "\n}")
+		#	datei.write("digraph G { \n" + "graph [fontsize=24];\n" + self.dotPrint() + "\n}")
 		datei.close()
 		commands.getstatusoutput('dot -Tps graph.dot -o graph.ps')
 		commands.getstatusoutput('ps2pdf graph.ps')
 		return #"digraph G { \n" + self.dotPrint() + "\n}"
 
 
-
 	def doNaiveDecomp(self, k, variableOrder, setOfLdMy):
-	# returns a nested array which symbolizes the structure of the LUT chain, for example for k=3: [3,2, [1,[4,5,6],[4,5,6]] ] -> x2 and x3 are in the free set, remaining variables are in the bound set
+		# returns a nested array which symbolizes the structure of the LUT chain, for example for k=3: [3,2, [1,[4,5,6],[4,5,6]] ] -> x2 and x3 are in the free set, remaining variables are in the bound set
 		
 		# variableOrder is an array with the form of [9, 3, 12, ...] as example (cardinality is number of inputs)
 		# setOfLdMy is an arary with the form of [1, 1, 2, 8, ..., 4, 2] as example (cardinality is number of inputs-1), elements with the form of 2**i
@@ -241,7 +275,7 @@ class Node(object):
 
 
 	def cutTreeAtHeight(self, cutHeight, lvlNodes):
-	# currently just working for cuts with my=2 !!!
+		# currently just working for cuts with my=2 !!!
 		if(cutHeight < 1):
 			print "\nExit Status: wrong cut height for a certain subtree declared. Cut height reached %s." %cutHeight
 			exit(1)
@@ -262,7 +296,7 @@ class Node(object):
 
 		self.trueNode.cutTreeAtHeight(cutHeight-1, lvlNodes)
 		self.falseNode.cutTreeAtHeight(cutHeight-1, lvlNodes)
-				
+
 def bddToBlif(rootNode, base):
 	#base gives the my, which symbolizes the number of ones at the beginning of each line
 	stringOutput = ''
@@ -291,7 +325,6 @@ def bddToBlif(rootNode, base):
 	else:
 		stringOutput += arrayOnSetAll[-1] + " 1"					# last line without newline at the end
 	return stringOutput 
-
 	
 # auxiliary function to descend recursive through the tree and save all ways of the on set
 def getAllOnPaths(treeheight, rootNode, way=''):
@@ -400,7 +433,6 @@ def doShannon(maxterm, level, height, expansionOrder):
 		else:
 			return Node('x' + str(expansionOrder[level-1]), doShannon(maxTermT,level+1,height,expansionOrder), doShannon(maxTermF, level+1,height,expansionOrder) )
 
-
 def countNodes(rootNode):
 
 	counter   = 0
@@ -410,7 +442,7 @@ def countNodes(rootNode):
 
 	while type(checkNode.trueNode) == Node:
 
-		counter 	= counter + len(set(countSet)) 
+		counter 	+= len(set(countSet)) 
 		checkNode 	= countSet[0]
 		rootNodes	= countSet[:]
 
@@ -420,5 +452,164 @@ def countNodes(rootNode):
 			
 			countSet.append(knoten.falseNode)
 			countSet.append(knoten.trueNode)
-
 	return counter
+
+def updateLevel(rootNode):
+
+	level 		 = 0
+	checkNode    = rootNode
+	rootNodes    = [rootNode]
+
+
+	while type(checkNode) == Node:
+
+		newRootNodes = []
+
+		for knoten in rootNodes:
+			
+			knoten.setLevel(level)
+			newRootNodes.append(knoten.trueNode)
+			newRootNodes.append(knoten.falseNode)
+
+		checkNode  = newRootNodes[0]
+		rootNodes  = set(newRootNodes[:])
+		level 	  += 1
+
+def moveDown(variable, rootNode):
+
+	updateLevel(rootNode)
+
+	# searching for the variable in tree and collect all nodes of this variable
+	checkNode = rootNode
+	nodeSet   = [rootNode]
+
+	while (checkNode.variable != variable):
+
+		newNodes = []
+
+		for knoten in nodeSet:
+
+			newNodes.append(knoten.falseNode)
+			newNodes.append(knoten.trueNode)
+
+		checkNode = newNodes[0]
+		nodeSet   = set(newNodes[:])
+
+		try:
+			t = checkNode.trueNode
+		except Exception, e:
+			print "unzulaessiger Knotenzugriff, Variable %s konnte nicht gefunden werden." %(variable) ,e 
+
+
+	# check if move is possible and move
+	if type(checkNode.trueNode) != Node:
+		
+		print "couldnt move down, variable at bottom!"
+		return False
+
+	else:
+		
+		print "moving down %s" %variable
+
+		# bend the pointer :)
+		for knoten in nodeSet:
+
+			# shallow copy to prevent interference when node has more than one predecessor
+			knoten.setTrueNode(copy(knoten.trueNode))
+			knoten.setFalseNode(copy(knoten.falseNode))
+
+			trueFalse = knoten.trueNode.falseNode
+			falseTrue = knoten.falseNode.trueNode
+
+			knoten.trueNode.setFalseNode(falseTrue)
+			knoten.falseNode.setTrueNode(trueFalse)
+
+			var1 = knoten.variable
+			var2 = knoten.trueNode.variable
+
+			knoten.setVariable(var2)
+			knoten.trueNode.setVariable(var1)
+			knoten.falseNode.setVariable(var1)
+
+		return True
+
+def moveUp(variable, rootNode):
+
+	# searching for the variable above the variable to move up
+	checkNode = rootNode
+
+	if checkNode.variable == variable:
+	
+		print "couldnt move up - variable on top"
+		return False
+	
+	else:
+
+
+		try:
+			t = checkNode.trueNode
+		except Exception, e:
+			print "unzulaessiger Knotenzugriff, Variable %s konnte nicht gefunden werden." %(variable) ,e 
+
+		while(checkNode.variable != variable):
+
+			prevNode  = checkNode
+			checkNode = checkNode.trueNode
+
+
+		print "moving up %s by moving down %s" %(variable, prevNode.variable)
+		
+		return moveDown(prevNode.variable,rootNode)
+
+def doSifting(rootNode):
+	
+	updateLevel(rootNode)
+	movedVariables = set([])
+
+	while len(movedVariables) < getHeight(rootNode):
+
+		rootNode.makeQRBDD()
+		
+
+		# selecting highest variable that is not moved yet
+		var 	  = rootNode.variable
+		tempNode  = rootNode
+
+		while var in movedVariables:
+			tempNode = tempNode.trueNode
+			var = tempNode.variable
+
+
+
+		# shift down to end bottom of the tree and notice the number of nodes
+		book = dict({})
+		book[tempNode.level] = countNodes(rootNode)
+
+		while(moveDown(var,rootNode)):
+
+			tempNode=tempNode.trueNode
+			updateLevel(rootNode)
+			rootNode.makeQRBDD()
+			book[tempNode.level] = countNodes(rootNode)
+			print tempNode.level
+
+		# shift up to level with smallest number of nodes
+		print book
+		mini  = min(book.iteritems(), key=itemgetter(1))[0]
+		level = getHeight(rootNode)-1
+
+		print "starting level: %s" %level
+		print "minimum at level %i" %mini
+
+		while(level != mini):
+			level -= 1
+			moveUp(var,rootNode)
+
+
+
+
+
+
+		movedVariables.add(var)
+
+

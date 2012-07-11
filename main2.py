@@ -12,9 +12,9 @@ import cProfile
 
 #------- file read ---------------------------------------------
 
-f = open('absp2.pla','r')
+#f = open('absp2.pla','r')
 #f = open('absp_i28.pla','r')			#i28
-#f = open('blif_src/spla.pla','r')		#i16
+f = open('blif_src/spla.pla','r')		#i16
 #f = open('blif_src/apex2.pla','r')		#i39
 #f = open('blif_src/seq.pla','r')		#i41
 #f = open('blif_src/ex1010.pla','r')		#i10
@@ -116,8 +116,23 @@ resultTree = bdd.doShannon(maxtermArray[0],1, inputs, weight_dic_int)		# must be
 
 #print resultTree
 
+
 print "\n\n... creating QRBDD"
 resultTree.makeQRBDD()
+
+
+print "\n\n ... updating level"
+bdd.updateLevel(resultTree)
+
+
+cProfile.run("bdd.doSifting(resultTree)")
+
+print bdd.countNodes(resultTree)
+print "\n\n plotting tree"
+resultTree.dotPrint2()
+
+exit()
+
 
 
 
