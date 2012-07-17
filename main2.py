@@ -24,7 +24,7 @@ f = open('blif_src/spla.pla','r')		#i16
 #f = open('blif_src/ex5.pla','r')		#i8
 
 # define your k here
-k = 3 
+k = 5 
 
 content = f.readlines()
 f.close()
@@ -124,16 +124,18 @@ resultTree.makeQRBDD()
 print "\n\n ... updating level"
 bdd.updateLevel(resultTree)
 
+#bdd.doSifting(resultTree)
+#cProfile.run("bdd.doSifting(resultTree)")
 
-cProfile.run("bdd.doSifting(resultTree)")
+# update the variable order after sifting:
+weight_dic_int=bdd.getVariableOrder(resultTree)
 
-print bdd.countNodes(resultTree)
-print "\n\n plotting tree"
+print "\nNumber of Nodes:",bdd.countNodes(resultTree)
+print "\n\n... plotting tree"
 resultTree.dotPrint2()
 
-exit()
 
-
+# compute the gain for each height
 
 
 
@@ -157,6 +159,7 @@ print lutstruc
 
 
 
+exit(1)
 
 
 
