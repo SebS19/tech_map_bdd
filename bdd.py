@@ -202,11 +202,12 @@ class Node(object):
 		return #"digraph G { \n" + self.dotPrint() + "\n}"
 
 
-	def doNaiveDecomp(self, k, variableOrder, setOfLdMy):
+	def doNaiveDecomp(self, k, variableOrder, setOfLdMy, listOfCuts=[]):
 		# returns a nested array which symbolizes the structure of the LUT chain, for example for k=3: [3,2, [1,[4,5,6],[4,5,6]] ] -> x2 and x3 are in the free set, remaining variables are in the bound set
 		
 		# variableOrder is an array with the form of [9, 3, 12, ...] as example (cardinality is number of inputs)
 		# setOfLdMy is an arary with the form of [1, 1, 2, 8, ..., 4, 2] as example (cardinality is number of inputs-1), elements with the form of 2**i
+		# listOfCuts returns a list of integers which symbolize the cut heights of the tree
 		if(0 in setOfLdMy):
 			print "\nExit status: setOfLdMy must not contain 0 as element!"
 			exit(1)
@@ -381,6 +382,24 @@ def cutTreeAtHeight(rootNode, cutHeight):
 
 
 
+def getOnPaths(rootNode):
+	# returns an array of all ways for the rootNode which met a True-leave. e.g. ['111','010'] or [], if treeHeight=0 or no on-path is available
+	arrayOnSetAll = getAllOnPaths(getHeight(rootNode), rootNode)
+
+	# catch some exceptions here
+	if (arrayOnSetAll == '' or arrayOnSetAll == None):
+		return []
+	elif (type(arrayOnSetAll) == str):
+		arrayOnSetAll = [arrayOnSetAll]
+	else:
+		arrayOnSetAll = bas.flatten_tuple(arrayOnSetAll)			# flatten the tuple structure
+	arrayOnSetAll = filter (lambda x: x!=None, arrayOnSetAll)			# remove all None entries	
+
+	return arrayOnSetAll
+	
+
+# function can be deleted later on, overwritten by getOnPaths
+'''
 def bddToBlif(rootNode, base):
 	#base gives the my, which symbolizes the number of ones at the beginning of each line
 	stringOutput = ''
@@ -409,10 +428,11 @@ def bddToBlif(rootNode, base):
 	else:
 		stringOutput += arrayOnSetAll[-1] + " 1"					# last line without newline at the end
 	return stringOutput 
+'''
 	
-# auxiliary function to descend recursive through the tree and save all ways of the on set
+# auxiliary function to descend recursive through the tree and save all ways of the on set, necessary for function getOnPaths
 def getAllOnPaths(treeheight, rootNode, way=''):
-	# termination:
+	# termination condition:
 	if treeheight == 0 and repr(rootNode)=='True':
 		return way
 	elif treeheight == 0:
@@ -423,14 +443,16 @@ def getAllOnPaths(treeheight, rootNode, way=''):
 	else:
 		return getAllOnPaths(treeheight-1, rootNode.trueNode, way+'1'), getAllOnPaths(treeheight-1, rootNode.falseNode, way+'0')
 
-# auxiliary function to get height of a tree
+# auxiliary function to get height of a tree, height of a leave is defined as 0
 def getHeight(rootNode):
-	if type(rootNode.trueNode) != Node:
+	if type(rootNode) != Node:		# just in case you call the function with a leave
+		return 0
+	elif type(rootNode.trueNode) != Node:
 		return 1
 	else:
 		return getHeight(rootNode.trueNode) + 1
 
-# returns the combatibilty My depending on the chosen tree level or with other words the number of the nodes x_i for a chosen i
+# returns the compatibilty My depending on the chosen tree level or with other words the number of the nodes x_i for a chosen i
 def getMy(rootNode, level):
 	global arrayOfNodes
 	my = len(getArrayOfLvlNodes(rootNode, level))
@@ -438,13 +460,13 @@ def getMy(rootNode, level):
 	return my 
 
 arrayOfNodes = []
-
 def getArrayOfLvlNodes(rootNode, level):
 	global arrayOfNodes
 	tempArray = getArrayOfLvlNodesAUX(rootNode, level)
 	arrayOfNodes = []
 	return tempArray
 
+# NEVER use this function, just defined for the use in getArrayOfLvlNodes 
 def getArrayOfLvlNodesAUX(rootNode, level):
 	global arrayOfNodes
 	if(level == 1 and not(rootNode in arrayOfNodes)):
@@ -456,6 +478,14 @@ def getArrayOfLvlNodesAUX(rootNode, level):
 			getArrayOfLvlNodesAUX(rootNode.falseNode, level-1)
 
 	return arrayOfNodes
+
+def getVariableOrder(rootNode, orderArray=[]):
+	# returns an array of integers, which symbolize the order of the variables of the tree from the top to the bottom
+	orderArray.append( int(rootNode.variable[1:]) )
+	if(type(rootNode.trueNode) == Node):
+		return getVariableOrder(rootNode.trueNode, orderArray)
+	else:
+		return orderArray
 
 def doShannon(maxterm, level, height, expansionOrder):
 	# expansionOrder is a list of integers which symbolize the variable indeces sorted by weight

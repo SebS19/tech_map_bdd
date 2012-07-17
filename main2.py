@@ -12,9 +12,9 @@ import cProfile
 
 #------- file read ---------------------------------------------
 
-f = open('absp2.pla','r')
+#f = open('absp2.pla','r')
 #f = open('absp_i28.pla','r')			#i28
-#f = open('blif_src/spla.pla','r')		#i16
+f = open('blif_src/spla.pla','r')		#i16
 #f = open('blif_src/apex2.pla','r')		#i39
 #f = open('blif_src/seq.pla','r')		#i41
 #f = open('blif_src/ex1010.pla','r')		#i10
@@ -124,12 +124,15 @@ resultTree.makeQRBDD()
 print "\n\n ... updating level"
 bdd.updateLevel(resultTree)
 
+#bdd.doSifting(resultTree)
+#cProfile.run("bdd.doSifting(resultTree)")
 
-#Profile.run("bdd.doSifting(resultTree)")
+# update the variable order after sifting:
+weight_dic_int=bdd.getVariableOrder(resultTree)
 
-print bdd.countNodes(resultTree)
-print "\n\n plotting tree"
-resultTree.dotPrint2("original")
+print "\nNumber of Nodes:",bdd.countNodes(resultTree)
+print "\n\n... plotting tree"
+resultTree.dotPrint2()
 
 cutTrees = bdd.cutTreeAtHeight(resultTree, 2)
 
@@ -142,7 +145,7 @@ for tree in cutTrees:
 
 exit()
 
-
+# compute the gain for each height
 
 
 
@@ -166,6 +169,7 @@ print lutstruc
 
 
 
+exit(1)
 
 
 
