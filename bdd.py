@@ -5,6 +5,7 @@ import math
 from copy import copy
 from copy import deepcopy
 from operator import itemgetter
+from scipy import weave
 
 class DecompositionError(Exception):
 	def __init__(self, value):
@@ -97,13 +98,18 @@ class Node(object):
 
 	# defining the textual representation of a node (keep in mind that this is a recursion)
 	def __repr__(self):
-		return  "Node("+ repr(self.__variable) + ":" + repr(self.__trueNode) + "|" + repr(self.__falseNode) + ")"
+		expr = "return  'Node('+ repr(self.__variable) + ':' + repr(self.__trueNode) + '|' + repr(self.__falseNode) + ')'"
+		weave.blitz(expr)
 
 
 	def __eq__(self, otherNode):
 		if self.__variable == otherNode.variable:
-			if type(self.__trueNode) == Node:
-				return self.__trueNode == otherNode.trueNode and self.__falseNode == otherNode.falseNode 
+			if ( self.__trueNode is self.__falseNode and not(otherNode.trueNode is otherNode.falseNode)):
+				return False
+			elif ( not(self.__trueNode is self.__falseNode) and otherNode.trueNode is otherNode.falseNode):
+				return False
+			elif type(self.__trueNode) == Node:
+				return self.__trueNode == otherNode.trueNode and self.__falseNode == otherNode.falseNode
 			else:
 				return repr(self.__trueNode) == repr(otherNode.trueNode) and repr(self.__falseNode) == repr(otherNode.falseNode)
 		else:
@@ -223,7 +229,7 @@ class Node(object):
 		if(cutPosition < k):
 			variableOrder.reverse()		# just to keep the order of the LUT structure consistently
 			nestedLUTstruct=variableOrder
-			return nestedLUTstruct
+			return nestedLUTstruct,listOfCuts
 	
 		# add variables to free set until all ports are assigned
 		whileLoopEntered = False						# boolean variable to check if it is actually possible to assign further ports
@@ -243,42 +249,44 @@ class Node(object):
 
 		# restore cutPosition
 		cutPosition += 1
+		
+		listOfCuts.append(cutPosition-1)
 
 		# recursive cutting depending on ld(my)
 		currentLdMy = setOfLdMy[cutPosition-1]
 
 		if(currentLdMy == 1):
-			recursiveLUTstruct = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1]) 
+			recursiveLUTstruct, cutHeigths = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1], listOfCuts) 
 			nestedLUTstruct.append(recursiveLUTstruct)
-			return nestedLUTstruct
+			return nestedLUTstruct, cutHeigths
 		elif(currentLdMy == 2):
-			recursiveLUTstruct = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1]) 
+			recursiveLUTstruct, cutHeigths = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1], listOfCuts)
 			nestedLUTstruct.extend([recursiveLUTstruct, recursiveLUTstruct])
-			return nestedLUTstruct
+			return nestedLUTstruct, cutHeigths
 		elif(currentLdMy == 3):
-			recursiveLUTstruct = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1]) 
+			recursiveLUTstruct, cutHeigths = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1], listOfCuts)
 			nestedLUTstruct.extend([recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct])
-			return nestedLUTstruct
+			return nestedLUTstruct, cutHeigths
 		elif(currentLdMy == 4):
-			recursiveLUTstruct = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1]) 
+			recursiveLUTstruct, cutHeigths = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1], listOfCuts)
 			nestedLUTstruct.extend([recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct])
-			return nestedLUTstruct
+			return nestedLUTstruct, cutHeigths
 		elif(currentLdMy == 5):
-			recursiveLUTstruct = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1]) 
+			recursiveLUTstruct, cutHeigths = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1], listOfCuts)
 			nestedLUTstruct.extend([recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct])
-			return nestedLUTstruct
+			return nestedLUTstruct, cutHeigths
 		elif(currentLdMy == 6):
-			recursiveLUTstruct = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1]) 
+			recursiveLUTstruct, cutHeigths = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1], listOfCuts)
 			nestedLUTstruct.extend([recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct])
-			return nestedLUTstruct
+			return nestedLUTstruct, cutHeigths
 		elif(currentLdMy == 7):
-			recursiveLUTstruct = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1]) 
+			recursiveLUTstruct, cutHeigths = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1], listOfCuts)
 			nestedLUTstruct.extend([recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct])
-			return nestedLUTstruct
+			return nestedLUTstruct, cutHeigths
 		elif(currentLdMy == 8):
-			recursiveLUTstruct = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1]) 
+			recursiveLUTstruct, cutHeigths = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1], listOfCuts)
 			nestedLUTstruct.extend([recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct, recursiveLUTstruct])
-			return nestedLUTstruct
+			return nestedLUTstruct, cutHeigths
 		else:
 			print "k has to be 0<k<9."
 			exit(1)
@@ -470,7 +478,7 @@ def getArrayOfLvlNodes(rootNode, level):
 	arrayOfNodes = []
 	return tempArray
 
-# NEVER use this function, just defined for the use in getArrayOfLvlNodes 
+# NEVER use this function, just defined for the usage in getArrayOfLvlNodes 
 def getArrayOfLvlNodesAUX(rootNode, level):
 	global arrayOfNodes
 	if(level == 1 and not(rootNode in arrayOfNodes)):
@@ -483,7 +491,7 @@ def getArrayOfLvlNodesAUX(rootNode, level):
 
 	return arrayOfNodes
 
-def getVariableOrder(rootNode, orderArray=[]):
+def getVariableOrder(rootNode, orderArray):
 	# returns an array of integers, which symbolize the order of the variables of the tree from the top to the bottom
 	orderArray.append( int(rootNode.variable[1:]) )
 	if(type(rootNode.trueNode) == Node):
