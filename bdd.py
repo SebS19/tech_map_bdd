@@ -5,7 +5,6 @@ import math
 from copy import copy
 from copy import deepcopy
 from operator import itemgetter
-from scipy import weave
 
 class DecompositionError(Exception):
 	def __init__(self, value):
@@ -98,8 +97,7 @@ class Node(object):
 
 	# defining the textual representation of a node (keep in mind that this is a recursion)
 	def __repr__(self):
-		expr = "return  'Node('+ repr(self.__variable) + ':' + repr(self.__trueNode) + '|' + repr(self.__falseNode) + ')'"
-		weave.blitz(expr)
+		return  'Node('+ repr(self.__variable) + ':' + repr(self.__trueNode) + '|' + repr(self.__falseNode) + ')'
 
 
 	def __eq__(self, otherNode):
@@ -291,6 +289,51 @@ class Node(object):
 			print "k has to be 0<k<9."
 			exit(1)
 
+def encodeCutNodes(rootNode, cutPositions):
+	ultimativeArray = []
+	
+	for cutPos in cutPositions:
+		cutHeightArray = []
+		
+		allCutNodes = getArrayOfLvlNodes(rootNode,cutPos+2)
+		#update attribute 'note' with binary annotation
+	
+		numOfBits = int( math.ceil(math.log(len(allCutNodes),2)) )
+		counter   = int('100000000',2); 				# small hack for a binary counter ;)
+
+		for knoten in allCutNodes:
+			binEncoding = bin(counter)[-numOfBits:]
+			knoten.setNote(binEncoding)
+			cutHeightArray.append([binEncoding,knoten])
+			counter += 1
+
+		ultimativeArray.append(cutHeightArray)
+	
+	return ultimativeArray
+
+def getBLIF(ultArr):
+
+	############# INITIAL STEP ###############
+	currCutLvl = ultArr[0]
+	numSuppFuncs = len(currCutLvl[0][0])
+	usedSuppFuncs = numSuppFuncs
+	variablesBelow = getVariableOrder(currCutLvl[0][1], [])
+
+	bout = ".names"
+	for i in range(usedSuppFuncs):
+		bout += " h" + str(i+1)
+	for j in variablesBelow:
+		bout += " x" + str(j)
+	bout += " y"
+	
+	for eachCutNode in currCutLvl:
+		allOnPaths = getOnPaths(eachCutNode[1])
+		for eachWay in allOnPaths:
+			bout += "\n" + eachCutNode[0] + eachWay + ' 1'
+
+	return bout
+	#for currCut in range(len(ultArr)):
+		
 
 def cutTreeAtHeight(rootNode, cutHeight):
 

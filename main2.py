@@ -120,7 +120,6 @@ resultTree = bdd.doShannon(maxtermArray[0],1, inputs, weight_dic_int)		# must be
 print "\n\n... creating QRBDD"
 resultTree.makeQRBDD()
 
-
 print "\n\n ... updating level"
 bdd.updateLevel(resultTree)
 
@@ -128,24 +127,22 @@ bdd.updateLevel(resultTree)
 #cProfile.run("bdd.doSifting(resultTree)")
 
 # update the variable order after sifting:
-weight_dic_int=bdd.getVariableOrder(resultTree)
+weight_dic_int=bdd.getVariableOrder(resultTree,[])
 
 print "\nNumber of Nodes:",bdd.countNodes(resultTree)
-print "\n\n... plotting tree"
-resultTree.dotPrint2()
 
+#resultTree.dotPrint2()
+
+'''
 cutTrees = bdd.cutTreeAtHeight(resultTree, 2)
 
 cnt = 0
 for tree in cutTrees:
 	tree.dotPrint2("subtree" + str(cnt))
 	cnt += 1
+'''
 
 
-
-exit()
-
-# compute the gain for each height
 
 
 
@@ -162,12 +159,21 @@ for levels in range(1,inputs):
 
 print "\n... creating LUT structure" 
 
-# here comes the actual decomposition algorithm which returns just an array of arrays/integers
-lutstruc = resultTree.doNaiveDecomp(k, weight_dic_int, setOfLdMy)
+# here comes the actual decomposition algorithm which returns just an array of arrays/integers and a array of integers with the cut position within the tree
+lutstruc, cutHeights = resultTree.doNaiveDecomp(k, weight_dic_int, setOfLdMy)
 print "\nChosen %s-LUT structure:" %k
 print lutstruc
+print "\nCut positions:"
+print cutHeights
 
+ultimativeArray = bdd.encodeCutNodes(resultTree,cutHeights)
+print "\n\n... plotting tree"
+#print ultimativeArray
 
+output_test=bdd.getBLIF(ultimativeArray)
+print output_test
+
+resultTree.dotPrint2()
 
 exit(1)
 
