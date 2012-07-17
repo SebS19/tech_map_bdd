@@ -736,11 +736,12 @@ def transformToLUT(cutList, rootNode):
 	cutResults = []
 
 	helpFuncCounter = 1
+	helpSet = ['out']
+
 
 	for idx_tree in range(len(cutList)):
 		print "-----> CUT: %s" %idx_tree
 
-		
 		
 		for tree in treesToCut:
 			print "---------TREE to CUT at HEIGHT %s -------------------- \n \n" %(cutList[idx_tree])
@@ -752,6 +753,8 @@ def transformToLUT(cutList, rootNode):
 
 		treesToCut = []
 
+
+		resultCnt = 0
 		for result in cutResults:
 			#print "------> nodesToBlif: %s" %result[1]
 
@@ -759,8 +762,11 @@ def transformToLUT(cutList, rootNode):
 
 			for tree in result[0]:
 				outString 		+= "h" + str(helpFuncCounter) + " "
+				helpSet.append("h" + str(helpFuncCounter));
 				helpFuncCounter += 1
+
 				treesToCut.append(tree)
+				lastTree = tree;
 
 
 
@@ -768,16 +774,28 @@ def transformToLUT(cutList, rootNode):
 			result[1].add(ele)
 
 			for var in getVariableOrder(ele,[]):
-				outString += "x" + str(var) + " "
-
-
-
+				outString += "x" + str(var) + " " + helpSet.pop(0)
 
 			outString = outString + "\n" + nodesToBlif(result[1]);
 
 		cutResults = []
 
+
 	print "output: \n"
+	
+	for funcs in helpSet:
+
+		outString += "\n.names "
+		for var in getVariableOrder(lastTree,[]):
+			outString +=  "x" + str(var) + " "
+
+		outString += str(funcs) + "\n" + nodesToBlif([lastTree])
+
+
+
+
+
+
 	print outString
 
 
@@ -790,9 +808,9 @@ def nodesToBlif(listOfNodes):
 		#print "\n knoten to blif \n"
 		#print knoten
 		onPaths = getOnPaths(knoten)
-		print onPaths
+		
 		for way in onPaths:
-			outputString += knoten.note+":" + way + "\n"
+			outputString += knoten.note + way + " 1" + "\n"
 
 
 	#print outputString
