@@ -181,7 +181,7 @@ class Node(object):
 
 			for knoten in nodeList:
 				
-				outputString += str(id(knoten))  + ' [label="%s (%s)"]' %(knoten.variable,knoten.level) + "\n"
+				outputString += str(id(knoten))  + ' [label="%s (%s) [%s]"]' %(knoten.variable,knoten.level,knoten.note) + "\n"
 				outputString += str(id(knoten))  + "->" + str(id(knoten.falseNode)) + "[style=dotted] \n"
 				outputString += str(id(knoten))  + "->" + str(id(knoten.trueNode))  + "\n"
 
@@ -294,6 +294,9 @@ class Node(object):
 
 def cutTreeAtHeight(rootNode, cutHeight):
 
+	print "--------CUTTING AT LVL %s----------" %cutHeight
+	print rootNode
+
 	# find all nodes on the level before and after cutHeight
 
 	checkNode     = rootNode
@@ -331,9 +334,14 @@ def cutTreeAtHeight(rootNode, cutHeight):
 	for knoten in afterCutNodes:
 		knoten.setNote( bin(counter)[-numOfBits:])
 		counter += 1
-		print str(knoten) + "ANNOT " + knoten.note
+		#print str(knoten) + "ANNOT " + knoten.note
 
 
+
+
+	# debug
+
+	rootNode.dotPrint2("debug")
 
 	# creating return trees
 
@@ -350,7 +358,7 @@ def cutTreeAtHeight(rootNode, cutHeight):
 	for idx in range(numOfBits):
 		#print "---------------------"
 		#print tree
-		print "---------------------"
+		#print "---------------------"
 		level = 0
 		beforeCutNodes = [returnTrees[idx]]
 
@@ -385,10 +393,8 @@ def cutTreeAtHeight(rootNode, cutHeight):
 				print "error while setting the leaves"
 				exit(1)
 
-
-	return returnTrees
-
-
+	print "--------- CUT DONE ----------------"
+	return returnTrees,afterCutNodes
 
 def getOnPaths(rootNode):
 	# returns an array of all ways for the rootNode which met a True-leave. e.g. ['111','010'] or [], if treeHeight=0 or no on-path is available
@@ -404,7 +410,6 @@ def getOnPaths(rootNode):
 	arrayOnSetAll = filter (lambda x: x!=None, arrayOnSetAll)			# remove all None entries	
 
 	return arrayOnSetAll
-	
 
 # function can be deleted later on, overwritten by getOnPaths
 '''
@@ -437,7 +442,6 @@ def bddToBlif(rootNode, base):
 		stringOutput += arrayOnSetAll[-1] + " 1"					# last line without newline at the end
 	return stringOutput 
 '''
-	
 # auxiliary function to descend recursive through the tree and save all ways of the on set, necessary for function getOnPaths
 def getAllOnPaths(treeheight, rootNode, way=''):
 	# termination condition:
@@ -597,8 +601,6 @@ def updateLevel(rootNode):
 		rootNodes  = set(newRootNodes[:])
 		level 	  += 1
 
-
-
 def moveDown(variable, rootNode):
 
 	updateLevel(rootNode)
@@ -732,4 +734,75 @@ def doSifting(rootNode):
 
 		movedVariables.add(var)
 
+def transformToLUT(cutList, rootNode):
+
+	print "---------TRANSFORM TO LUT----------------"
+	#datei = open(output +".blif","w")
+	outString = ""
+
+	treesToCut = [rootNode]
+	cutResults = []
+
+	helpFuncCounter = 1
+
+	for idx_tree in range(len(cutList)):
+		print "-----> CUT: %s" %idx_tree
+
+		
+		
+		for tree in treesToCut:
+			print "---------TREE to CUT at HEIGHT %s -------------------- \n \n" %(cutList[idx_tree])
+			print tree
+			tree.dotPrint2("treeToCut")
+			cutResults.append( cutTreeAtHeight(tree, cutList[idx_tree]) )
+
+
+
+		treesToCut = []
+
+		for result in cutResults:
+			#print "------> nodesToBlif: %s" %result[1]
+
+			outString += "\n.names "
+
+			for tree in result[0]:
+				outString 		+= "h" + str(helpFuncCounter) + " "
+				helpFuncCounter += 1
+				treesToCut.append(tree)
+
+
+
+			ele = result[1].pop()
+			result[1].add(ele)
+
+			for var in getVariableOrder(ele,[]):
+				outString += "x" + str(var) + " "
+
+
+
+
+			outString = outString + "\n" + nodesToBlif(result[1]);
+
+		cutResults = []
+
+	print "output: \n"
+	print outString
+
+
+
+def nodesToBlif(listOfNodes):
+	
+	outputString = ""
+
+	for knoten in listOfNodes:
+		#print "\n knoten to blif \n"
+		#print knoten
+		onPaths = getOnPaths(knoten)
+		print onPaths
+		for way in onPaths:
+			outputString += knoten.note+":" + way + "\n"
+
+
+	#print outputString
+	return outputString
 
