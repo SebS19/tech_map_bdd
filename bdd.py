@@ -577,19 +577,20 @@ def doSifting(rootNode):
 
 		while var in movedVariables:
 			tempNode = tempNode.trueNode
-			var = tempNode.variable
+			var 	 = tempNode.variable
 
 
 
-		# shift down to end bottom of the tree and notice the number of nodes
+		# shift down to end / bottom of the tree and notice the number of nodes at every position
 		book = dict({})
 		book[tempNode.level] = countNodes(rootNode)
 
 		while(moveDown(var,rootNode)):
 
-			tempNode=tempNode.trueNode
+			tempNode = tempNode.trueNode
 			updateLevel(rootNode)
-			rootNode.makeQRBDD()
+			rootNode.makeQRBDD()		# big performance issue
+			
 			book[tempNode.level] = countNodes(rootNode)
 			print tempNode.level
 
@@ -604,12 +605,7 @@ def doSifting(rootNode):
 		while(level != mini):
 			level -= 1
 			moveUp(var,rootNode)
-
-
-
-
-
-
+			
 		movedVariables.add(var)
 
 
