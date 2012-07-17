@@ -3,6 +3,7 @@ import basicfunctions 	as bas
 import boolfunction		as bf
 import math
 from copy import copy
+from copy import deepcopy
 from operator import itemgetter
 
 class DecompositionError(Exception):
@@ -40,6 +41,7 @@ class Node(object):
 		
 		# attribute needed for sifting
 		self.__level		= 0
+		self.__note			= ""
 
 	
 
@@ -63,6 +65,11 @@ class Node(object):
 	def level(self):
 		return self.__level
 
+	@property
+	def note(self):
+		return self.__note
+
+
 	##########
 	# setter #
 	##########
@@ -80,6 +87,8 @@ class Node(object):
 	def setVariable(self,variable):
 		self.__variable = variable
 
+	def setNote(self,newNote):
+		self.__note = newNote
 
 	#####################
 	# function overload #
@@ -183,13 +192,13 @@ class Node(object):
 		return outputString
 
 	
-	def dotPrint2(self):
-		datei = open("graph.dot","w")
+	def dotPrint2(self, name="graph"):
+		datei = open(name+".dot","w")
 		datei.write("digraph G { \n" + "graph [fontsize=24];\n" + "edge  [fontsize=24];\n" + "node  [fontsize=24];\n" + "ranksep = 1.5;\n" + "nodesep = .25;\n" + 'edge [style="setlinewidth(3)"];\n' +  'size="2,4";\n' + "rotate=90;\n" "center=1;\n" + self.dotPrint() + "\n}")
 		#	datei.write("digraph G { \n" + "graph [fontsize=24];\n" + self.dotPrint() + "\n}")
 		datei.close()
-		commands.getstatusoutput('dot -Tps graph.dot -o graph.ps')
-		commands.getstatusoutput('ps2pdf graph.ps')
+		commands.getstatusoutput('dot -Tps ' + name + '.dot -o '+ name + '.ps')
+		commands.getstatusoutput('ps2pdf ' + name + '.ps')
 		return #"digraph G { \n" + self.dotPrint() + "\n}"
 
 
@@ -274,28 +283,103 @@ class Node(object):
 			exit(1)
 
 
-	def cutTreeAtHeight(self, cutHeight, lvlNodes):
-		# currently just working for cuts with my=2 !!!
-		if(cutHeight < 1):
-			print "\nExit Status: wrong cut height for a certain subtree declared. Cut height reached %s." %cutHeight
-			exit(1)
+def cutTreeAtHeight(rootNode, cutHeight):
 
-		if(cutHeight == 1):
-			if(type(self.trueNode) == Node):
-				if(lvlNodes.index(self.trueNode) == 0):
-					self.setTrueNode(Node.T)
-				elif(lvlNodes.index(self.trueNode) == 1):
-					self.setTrueNode(Node.F)
-					
-			if(type(self.falseNode) == Node):
-				if(lvlNodes.index(self.falseNode) == 0):
-					self.setFalseNode(Node.T)
-				elif(lvlNodes.index(self.falseNode) == 1):
-					self.setFalseNode(Node.F)
-			return 
+	# find all nodes on the level before and after cutHeight
 
-		self.trueNode.cutTreeAtHeight(cutHeight-1, lvlNodes)
-		self.falseNode.cutTreeAtHeight(cutHeight-1, lvlNodes)
+	checkNode     = rootNode
+	afterCutNodes = [rootNode]
+	level 		  = 0
+
+	while level < cutHeight+1:
+
+		newRootNodes = []
+
+		for knoten in afterCutNodes:
+
+			newRootNodes.append(knoten.trueNode)
+			newRootNodes.append(knoten.falseNode)
+
+		checkNode     = newRootNodes[0]
+
+		beforeCutNodes = afterCutNodes
+		afterCutNodes  = set(newRootNodes[:])
+		
+		level 	  += 1
+
+		try:
+			t = checkNode.trueNode
+		except Exception, e:
+			print "unzulaessiger Knotenzugriff, Cut Height (%s) konnte nicht erreicht werden." %(cutHeight) ,e
+
+
+
+	#update attribute 'note' with binary annotation
+
+	numOfBits = int( math.ceil(math.log(len(afterCutNodes),2)) )
+	counter   = int('100000000',2); # small hack for a binary counter ;)
+
+	for knoten in afterCutNodes:
+		knoten.setNote( bin(counter)[-numOfBits:])
+		counter += 1
+		print str(knoten) + "ANNOT " + knoten.note
+
+
+
+	# creating return trees
+
+	returnTrees = []
+
+	for idx in range(numOfBits):
+		print idx
+		returnTrees.append(deepcopy(rootNode))
+
+
+
+	# go to cut level in each return tree and set the correct leaves
+
+	for idx in range(numOfBits):
+		#print "---------------------"
+		#print tree
+		print "---------------------"
+		level = 0
+		beforeCutNodes = [returnTrees[idx]]
+
+		while level != cutHeight:
+
+			newRootNodes = []
+
+			for knoten in beforeCutNodes:
+
+				newRootNodes.append(knoten.trueNode)
+				newRootNodes.append(knoten.falseNode)
+
+			beforeCutNodes = set(newRootNodes[:])
+			level += 1
+
+
+		for knoten in beforeCutNodes:
+
+			if knoten.falseNode.note[idx] == '0':
+				knoten.setFalseNode(Node.F)
+			elif knoten.falseNode.note[idx] == '1':
+				knoten.setFalseNode(Node.T)
+			else:
+				print "error while setting the leaves"
+				exit(1)
+
+			if knoten.trueNode.note[idx] == '0':
+				knoten.setTrueNode(Node.F)
+			elif knoten.trueNode.note[idx] == '1':
+				knoten.setTrueNode(Node.T)
+			else:
+				print "error while setting the leaves"
+				exit(1)
+
+
+	return returnTrees
+
+
 
 def bddToBlif(rootNode, base):
 	#base gives the my, which symbolizes the number of ones at the beginning of each line
@@ -475,6 +559,8 @@ def updateLevel(rootNode):
 		rootNodes  = set(newRootNodes[:])
 		level 	  += 1
 
+
+
 def moveDown(variable, rootNode):
 
 	updateLevel(rootNode)
@@ -605,7 +691,7 @@ def doSifting(rootNode):
 		while(level != mini):
 			level -= 1
 			moveUp(var,rootNode)
-			
+
 		movedVariables.add(var)
 
 
