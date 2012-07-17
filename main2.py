@@ -12,9 +12,9 @@ import cProfile
 
 #------- file read ---------------------------------------------
 
-#f = open('absp2.pla','r')
+f = open('absp2.pla','r')
 #f = open('absp_i28.pla','r')			#i28
-f = open('blif_src/spla.pla','r')		#i16
+#f = open('blif_src/spla.pla','r')		#i16
 #f = open('blif_src/apex2.pla','r')		#i39
 #f = open('blif_src/seq.pla','r')		#i41
 #f = open('blif_src/ex1010.pla','r')		#i10
@@ -134,13 +134,16 @@ print "\nNumber of Nodes:",bdd.countNodes(resultTree)
 print "\n\n... plotting tree"
 resultTree.dotPrint2()
 
-cutTrees = bdd.cutTreeAtHeight(resultTree, 2)
 
-cnt = 0
-for tree in cutTrees:
-	tree.dotPrint2("subtree" + str(cnt))
-	cnt += 1
+#cutTrees = bdd.cutTreeAtHeight(resultTree, 2)
 
+#cnt = 0
+#for tree in cutTrees:
+#	tree.dotPrint2("subtree" + str(cnt))
+#	cnt += 1
+
+
+bdd.transformToLUT([2,1],resultTree)
 
 
 exit()
