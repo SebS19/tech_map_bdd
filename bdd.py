@@ -6,13 +6,6 @@ from copy import copy
 from copy import deepcopy
 from operator import itemgetter
 
-class DecompositionError(Exception):
-	def __init__(self, value):
-		self.__value__ = value
-	
-	def __str__(self):
-		return self.__value__
-
 class Node(object):
 
 	# true / false classes for the end of the tree
@@ -205,6 +198,33 @@ class Node(object):
 		commands.getstatusoutput('ps2pdf ' + name + '.ps')
 		return #"digraph G { \n" + self.dotPrint() + "\n}"
 
+	def doSmartDecomp(self, k, variableOrder, setOfLdMy):
+		treeHeight = len(variableOrder)
+		
+		# if only one LUT is needed return empty cut list
+		if(treeHeight <= k):
+			return []		
+
+		# first calculate the gain for each level (number of nodes in a level for the worst case minus real number of nodes in this level)
+		gainArr = []
+		for level in range (treeHeight):
+			worstLvlCase = 2**(treeHeight - level + 1)
+			if ( worstLvlCase > 2**level ):
+				worstLvlCase = 2**level
+			realLvlCase = len(getArrayOfLvlNodes(self, level+1))
+			print "no. nodes:", realLvlCase
+
+			gainArr.append(worstLvlCase - realLvlCase)
+		print "\nLd(my): ", setOfLdMy
+		
+		# now cut the tree conceptually
+		cutArr = doSmartDecompRecursive(k, gainArr, setOfLdMy)
+
+		# sort cut array
+		cutArr.sort()
+		cutArr.reverse()	# highest level index at the beginning
+
+		return cutArr
 
 	def doNaiveDecomp(self, k, variableOrder, setOfLdMy, listOfCuts=[]):
 		# returns a nested array which symbolizes the structure of the LUT chain, for example for k=3: [3,2, [1,[4,5,6],[4,5,6]] ] -> x2 and x3 are in the free set, remaining variables are in the bound set
@@ -214,9 +234,6 @@ class Node(object):
 		# listOfCuts returns a list of integers which symbolize the cut heights of the tree
 		if(0 in setOfLdMy):
 			print "\nExit status: setOfLdMy must not contain 0 as element!"
-			exit(1)
-		if(k > 8):
-			print "\nExit Status: k > 8 not implemented"
 			exit(1)
 
 		nestedLUTstruct=[]
@@ -257,6 +274,16 @@ class Node(object):
 			recursiveLUTstruct, cutHeigths = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1], listOfCuts) 
 			nestedLUTstruct.append(recursiveLUTstruct)
 			return nestedLUTstruct, cutHeigths
+		else:
+			recursiveLUTstruct, cutHeigths = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1], listOfCuts)
+			recursiveLUTarray = []
+			for numbOfStructs in range(currentLdMy):
+				recursiveLUTarray.append(recursiveLUTstruct)
+			nestedLUTstruct.extend(recursiveLUTarray)
+			
+			return nestedLUTstruct, cutHeigths
+	# following code was optimized to the for-loop above
+	'''		
 		elif(currentLdMy == 2):
 			recursiveLUTstruct, cutHeigths = self.doNaiveDecomp(k, variableOrder[:cutPosition], setOfLdMy[:cutPosition-1], listOfCuts)
 			nestedLUTstruct.extend([recursiveLUTstruct, recursiveLUTstruct])
@@ -287,7 +314,47 @@ class Node(object):
 			return nestedLUTstruct, cutHeigths
 		else:
 			print "k has to be 0<k<9."
-			exit(1)
+			exit(1)'''
+
+def doSmartDecompRecursive(k, gainArr, setOfLdMy, cutArray=[]):
+
+	bestCutLvl = gainArr.index(max(gainArr))
+	cutArray.append(bestCutLvl)
+	print "Best index:", bestCutLvl
+	print "Incomming gain:",gainArr
+	
+	# preparation for recursive descent
+	gainArrLeft = copy(gainArr)
+	gainArrRight = gainArr
+	for i in range(bestCutLvl,len(gainArr)):
+		gainArrLeft[i] = -1
+	for j in range(bestCutLvl+1):
+		gainArrRight[j] = -1
+
+	numbElemNotNegLeft = 0
+	numbElemNotNegRight = 0
+	for elem in gainArrLeft:
+		if(elem>=0):
+			numbElemNotNegLeft += 1
+	for elem in gainArrRight:
+		if(elem>=0):
+			numbElemNotNegRight += 1
+
+	print "left: ", gainArrLeft
+	print "not neg:", numbElemNotNegLeft
+	print "right: ", gainArrRight
+	print "not neg:", numbElemNotNegRight
+
+
+	if(numbElemNotNegLeft + setOfLdMy[bestCutLvl] > k):
+		print "go left"
+		cutArray.extend(doSmartDecompRecursive(k, gainArrLeft, setOfLdMy, []))
+	if(numbElemNotNegRight + setOfLdMy[bestCutLvl] > k):
+		print "go right"
+		cutArray.extend(doSmartDecompRecursive(k, gainArrRight, setOfLdMy, [])) 
+
+	return cutArray
+
 
 def encodeCutNodes(rootNode, cutPositions):
 	ultimativeArray = []
@@ -299,6 +366,10 @@ def encodeCutNodes(rootNode, cutPositions):
 		#update attribute 'note' with binary annotation
 	
 		numOfBits = int( math.ceil(math.log(len(allCutNodes),2)) )
+		# prevent exception:
+		if(numOfBits == 0):
+			numOfBits = 1
+
 		counter   = int('100000000',2); 				# small hack for a binary counter ;)
 
 		for knoten in allCutNodes:
@@ -311,7 +382,23 @@ def encodeCutNodes(rootNode, cutPositions):
 	
 	return ultimativeArray
 
-def getBLIF(ultArr):
+# returns a string 'bout' of the blif description, needs the array from function encodeCutNodes() and the actual rootNode
+def getBLIF(ultArr, rootNode):
+		
+	############ EXCEPTIONS ##############
+	# if there are no cuts do the following
+	if(ultArr == []):
+		variablesBelow = getVariableOrder(rootNode, [])
+		bout = ".names"
+		for j in variablesBelow:
+			bout += " x" + str(j)
+		bout += " y"
+
+		allOnPaths = getOnPaths(rootNode)
+		for eachWay in allOnPaths:
+			bout += "\n" + eachWay + ' 1'
+		return bout
+		
 
 	############# INITIAL STEP ###############
 	currCutLvl = ultArr[0]
@@ -320,7 +407,7 @@ def getBLIF(ultArr):
 	variablesBelow = getVariableOrder(currCutLvl[0][1], [])
 
 	bout = ".names"
-	for i in range(usedSuppFuncs):
+	for i in range(numSuppFuncs):
 		bout += " h" + str(i+1)
 	for j in variablesBelow:
 		bout += " x" + str(j)
@@ -330,10 +417,58 @@ def getBLIF(ultArr):
 		allOnPaths = getOnPaths(eachCutNode[1])
 		for eachWay in allOnPaths:
 			bout += "\n" + eachCutNode[0] + eachWay + ' 1'
+	bout += "\n"
+
+	############ MAIN LOOP ##############
+	# for every next cut
+	for currCutHeight in range(1,len(ultArr) + 1):
+		# some initial stuff
+		prevCutNodeIndex = variablesBelow[0] 
+		prevUsedSuppFuncs = numSuppFuncs
+
+		# if the last cut is done and ultArr would be out of bounds (no further support functions need) do the following or the final step so to speak
+		if(currCutHeight == len(ultArr)):
+			variablesBelow = getVariableOrder(rootNode, [])
+			numSuppFuncs = 0 
+
+		else:
+			currCutLvl = ultArr[currCutHeight]
+			numSuppFuncs = len(currCutLvl[0][0])
+			variablesBelow = getVariableOrder(currCutLvl[0][1], [])
+
+		# only use variable order until the next cut below
+		del variablesBelow[variablesBelow.index(prevCutNodeIndex):]		
+		
+		# for every previous support function
+		for preSuppFuncs in range( len(ultArr[currCutHeight-1][0][0]) ):
+			bout += "\n.names"
+			for i in range(usedSuppFuncs+1, usedSuppFuncs + numSuppFuncs + 1):
+				bout += " h" + str(i)
+			for j in variablesBelow:
+				bout += " x" + str(j)
+			bout += " h" + str(usedSuppFuncs - prevUsedSuppFuncs + preSuppFuncs + 1) 
+
+			### here comes the computation of the paths
+			# here is also a case differentiation needed, if last cut step was done
+			if(currCutHeight == len(ultArr)):
+				allOnPaths = getOnPathsPartialTree(rootNode, preSuppFuncs, len(variablesBelow))
+				for eachWay in allOnPaths:
+					bout += "\n" + eachWay + ' 1'
+				
+			else:
+				for eachCutNode in currCutLvl:
+					allOnPaths = getOnPathsPartialTree(eachCutNode[1], preSuppFuncs, len(variablesBelow))
+					for eachWay in allOnPaths:
+						bout += "\n" + eachCutNode[0] + eachWay + ' 1'
+					
+			bout += "\n"
+
+
+		# increase used support function indeces (h1, h2, h3, ...)
+		usedSuppFuncs += numSuppFuncs
+			
 
 	return bout
-	#for currCut in range(len(ultArr)):
-		
 
 def cutTreeAtHeight(rootNode, cutHeight):
 
@@ -372,6 +507,10 @@ def cutTreeAtHeight(rootNode, cutHeight):
 	#update attribute 'note' with binary annotation
 
 	numOfBits = int( math.ceil(math.log(len(afterCutNodes),2)) )
+	# prevent exception:
+	if(numOfBits == 0):
+		numOfBits = 1
+
 	counter   = int('100000000',2); # small hack for a binary counter ;)
 
 	for knoten in afterCutNodes:
@@ -497,6 +636,35 @@ def getAllOnPaths(treeheight, rootNode, way=''):
 		return getAllOnPaths(treeheight-1, rootNode.trueNode, way+'-')
 	else:
 		return getAllOnPaths(treeheight-1, rootNode.trueNode, way+'1'), getAllOnPaths(treeheight-1, rootNode.falseNode, way+'0')
+
+# similiar to getOnPaths function, but for a partial tree, which encoded nodes
+def getOnPathsPartialTree(rootNode, selectionBit, partialTreeHeight):
+	# returns an array of all ways for the rootNode which met a One-Node at selectionBit. e.g. ['111','010'] or [], if treeHeight=0 or no on-path is available
+	arrayOnSetAll = getAllOnPathsPartialTree(selectionBit, partialTreeHeight, rootNode)
+
+	# catch some exceptions here
+	if (arrayOnSetAll == '' or arrayOnSetAll == None):
+		return []
+	elif (type(arrayOnSetAll) == str):
+		arrayOnSetAll = [arrayOnSetAll]
+	else:
+		arrayOnSetAll = bas.flatten_tuple(arrayOnSetAll)			# flatten the tuple structure
+	arrayOnSetAll = filter (lambda x: x!=None, arrayOnSetAll)			# remove all None entries	
+
+	return arrayOnSetAll
+
+# auxiliary function to descend recursive through the tree and save all ways of the on set, necessary for function getOnPathsPartialTree
+def getAllOnPathsPartialTree(selectionBit, treeheight, rootNode, way=''):
+	# termination condition:
+	if treeheight == 0 and rootNode.note[selectionBit]=='1':
+		return way
+	elif treeheight == 0:
+		return
+	# recursive descent:
+	if (rootNode.trueNode is rootNode.falseNode):
+		return getAllOnPathsPartialTree(selectionBit, treeheight-1, rootNode.trueNode, way+'-')
+	else:
+		return getAllOnPathsPartialTree(selectionBit, treeheight-1, rootNode.trueNode, way+'1'), getAllOnPathsPartialTree(selectionBit, treeheight-1, rootNode.falseNode, way+'0')
 
 # auxiliary function to get height of a tree, height of a leave is defined as 0
 def getHeight(rootNode):

@@ -24,7 +24,9 @@ f = open('absp2.pla','r')
 #f = open('blif_src/ex5.pla','r')		#i8
 
 # define your k here
-k = 3 
+k = 3
+# naive decomposition
+decNaive = True 
 
 content = f.readlines()
 f.close()
@@ -58,9 +60,9 @@ maxtermArray = []
 variableOrderArray = []
 
 for i in range(outputs):
-	maxtermArray.append(bf.Maxterm(i))						# i is index, increment for every output 
+	maxtermArray.append(bf.Maxterm(i))						# i is index, increment for each output 
 
-for output in range(outputs):									# for every output
+for output in range(outputs):									# for each output
 	equations_ONset = []								# only ON set equations
 	equations_NumberOfCares = []							# gives a number for each line, which indicates how many 0s or 1s are included
 
@@ -116,7 +118,6 @@ resultTree = bdd.doShannon(maxtermArray[0],1, inputs, weight_dic_int)		# must be
 
 #print resultTree
 
-
 print "\n\n... creating QRBDD"
 resultTree.makeQRBDD()
 
@@ -131,8 +132,6 @@ weight_dic_int=bdd.getVariableOrder(resultTree,[])
 
 print "\nNumber of Nodes:",bdd.countNodes(resultTree)
 
-<<<<<<< HEAD
-#resultTree.dotPrint2()
 
 '''
 cutTrees = bdd.cutTreeAtHeight(resultTree, 2)
@@ -142,10 +141,8 @@ for tree in cutTrees:
 	tree.dotPrint2("subtree" + str(cnt))
 	cnt += 1
 '''
-=======
 
 #cutTrees = bdd.cutTreeAtHeight(resultTree, 2)
->>>>>>> 1b6c6e3042eab42c0860d97375bd2ea9fd3885f7
 
 #cnt = 0
 #for tree in cutTrees:
@@ -153,44 +150,100 @@ for tree in cutTrees:
 #	cnt += 1
 
 
-bdd.transformToLUT([2,1],resultTree)
-
+#bdd.transformToLUT([2,1],resultTree)
 
 
 
 
 #--------create LUT structure ------------------------------------
+
 # create ld(my) for every level (actually it is not ld(my), because every ld(my)=0 becomes ld(my)=1)
+print "\n... calculating 'my' for each level"
 setOfLdMy = []
 for levels in range(1,inputs):
 	ldmy = int(math.ceil(math.log(bdd.getMy(resultTree,levels+1),2)))
-	# ldmy gets modify if ldmy=0 -> necessary for doNaiveDecomp function
+	# ldmy get modify if ldmy=0 -> necessary for doNaiveDecomp function
 	if(ldmy == 0):
 		ldmy = 1
 	setOfLdMy.append(ldmy)
 
-print "\n... creating LUT structure" 
+# naive or smart decomposition?
+if(decNaive == True):
+	print "\n... creating LUT structure" 
 
-# here comes the actual decomposition algorithm which returns just an array of arrays/integers and a array of integers with the cut position within the tree
-lutstruc, cutHeights = resultTree.doNaiveDecomp(k, weight_dic_int, setOfLdMy)
-print "\nChosen %s-LUT structure:" %k
-print lutstruc
+	# here comes the actual decomposition algorithm which returns just an array of arrays/integers and a array of integers with the cut position within the tree
+	lutstruc, cutHeights = resultTree.doNaiveDecomp(k, weight_dic_int, setOfLdMy)
+
+
+	print "\nChosen %s-LUT structure:" %k
+	print lutstruc
+
+else:
+	# smarter decomposition with the help of a gain for each level here:
+		cutHeights = resultTree.doSmartDecomp(k, weight_dic_int, setOfLdMy)
+
 print "\nCut positions:"
 print cutHeights
 
+
 ultimativeArray = bdd.encodeCutNodes(resultTree,cutHeights)
+outputCore = bdd.getBLIF(ultimativeArray, resultTree)
+
+
+
+
+
+
+#------write BLIF file ------------------------------------------
+print "\n... creating BLIF file"
+
+outputName = f.name.split('/')[-1].split('.')[0]+ '_%s_feasible' %k
+
+outputContent = ".model " + outputName + "\n.inputs" 
+for inVar in range(1,inputs+1):
+        outputContent += " x%s" %inVar
+outputContent += "\n.outputs y\n\n" + outputCore
+
+print "\n########## BLIF #########\n\n" + outputContent
+print "#########################"
+
+outputFile = open(outputName + ".blif", 'w')
+outputFile.write(outputContent)
+outputFile.close()
+
+
+
+
+
+
+# ------- PLOT --------------------------------------------------
 print "\n\n... plotting tree"
-#print ultimativeArray
-
-output_test=bdd.getBLIF(ultimativeArray)
-print output_test
-
 resultTree.dotPrint2()
 
+print "\nDone."
 exit(1)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
 #------write BLIF file ------------------------------------------
 print "\n... creating BLIF file"
 
@@ -284,6 +337,7 @@ print "\nDone."
 #	print "Level",levels,":", my
 #	gain = levels - int(math.ceil(math.log(my,2)))
 # 	print "Gain:", gain
+'''
 
 '''
 # Example for shannon expansion
