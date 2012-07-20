@@ -12,7 +12,7 @@ import cProfile
 
 #------- file read ---------------------------------------------
 
-f = open('absp2.pla','r')
+#f = open('absp2.pla','r')
 #f = open('absp_i28.pla','r')			#i28
 #f = open('blif_src/spla.pla','r')		#i16
 #f = open('blif_src/apex2.pla','r')		#i39
@@ -21,7 +21,7 @@ f = open('absp2.pla','r')
 #f = open('blif_src/pdc.pla','r')		#i16
 #f = open('blif_src/apex4.pla','r')		#i9
 #f = open('blif_src/misex3.pla','r')		#i14
-#f = open('blif_src/ex5.pla','r')		#i8
+f = open('blif_src/ex5.pla','r')		#i8
 
 # define your k here
 k = 3

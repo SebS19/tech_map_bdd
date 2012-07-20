@@ -205,20 +205,26 @@ class Node(object):
 		if(treeHeight <= k):
 			return []		
 
+		# calculate real number of nodes for each level
+		realNumbNodes = []
+		for level in range(treeHeight):
+			realNumbNodes.append(len(getArrayOfLvlNodes(self, level+1)))
+
 		# first calculate the gain for each level (number of nodes in a level for the worst case minus real number of nodes in this level)
 		gainArr = []
 		for level in range (treeHeight):
 			worstLvlCase = 2**(treeHeight - level + 1)
 			if ( worstLvlCase > 2**level ):
 				worstLvlCase = 2**level
-			realLvlCase = len(getArrayOfLvlNodes(self, level+1))
+			realLvlCase = realNumbNodes[level]
 			print "no. nodes:", realLvlCase
 
 			gainArr.append(worstLvlCase - realLvlCase)
 		print "\nLd(my): ", setOfLdMy
 		
 		# now cut the tree conceptually
-		cutArr = doSmartDecompRecursive(k, gainArr, setOfLdMy)
+		print "first gain", gainArr
+		cutArr = doSmartDecompRecursive(k, gainArr, setOfLdMy, realNumbNodes)
 
 		# sort cut array
 		cutArr.sort()
@@ -316,7 +322,7 @@ class Node(object):
 			print "k has to be 0<k<9."
 			exit(1)'''
 
-def doSmartDecompRecursive(k, gainArr, setOfLdMy, cutArray=[]):
+def doSmartDecompRecursive(k, gainArr, setOfLdMy, realNumbNodes, cutArray=[]):
 
 	bestCutLvl = gainArr.index(max(gainArr))
 	cutArray.append(bestCutLvl)
@@ -326,7 +332,7 @@ def doSmartDecompRecursive(k, gainArr, setOfLdMy, cutArray=[]):
 	# preparation for recursive descent
 	gainArrLeft = copy(gainArr)
 	gainArrRight = gainArr
-	for i in range(bestCutLvl,len(gainArr)):
+	for i in range(bestCutLvl+1,len(gainArr)):
 		gainArrLeft[i] = -1
 	for j in range(bestCutLvl+1):
 		gainArrRight[j] = -1
@@ -340,18 +346,45 @@ def doSmartDecompRecursive(k, gainArr, setOfLdMy, cutArray=[]):
 		if(elem>=0):
 			numbElemNotNegRight += 1
 
-	print "left: ", gainArrLeft
+	print "left before: ", gainArrLeft
 	print "not neg:", numbElemNotNegLeft
-	print "right: ", gainArrRight
+	print "right before: ", gainArrRight
 	print "not neg:", numbElemNotNegRight
 
+	# update gain for both partial trees
+	actualLvlLeft = 0
+	for elemLeftIdx, elemLeft in enumerate(gainArrLeft):
+		if(elemLeft != -1):
+			actualLvlLeft += 1
+			worstLvlCase = 2**(numbElemNotNegLeft - actualLvlLeft + 2)
+			if ( worstLvlCase > 2**(actualLvlLeft-1) ):
+				worstLvlCase = 2**(actualLvlLeft - 1)
+			realLvlCase = realNumbNodes[elemLeftIdx]
+			print "no. nodes:", realLvlCase
+
+			gainArrLeft[elemLeftIdx] = worstLvlCase - realLvlCase
+
+	actualLvlRight = 0
+	for elemRightIdx, elemRight in enumerate(gainArrRight):
+		if(elemRight != -1):
+			actualLvlRight += 1
+			worstLvlCase = 2**(numbElemNotNegRight - actualLvlRight + 2)
+			if ( worstLvlCase > 2**(actualLvlRight-1) ):
+				worstLvlCase = 2**(actualLvlRight - 1)
+			realLvlCase = realNumbNodes[elemRightIdx]
+			print "no. nodes:", realLvlCase
+
+			gainArrRight[elemRightIdx] = worstLvlCase - realLvlCase
+
+	print "left after: ", gainArrLeft
+	print "right after: ", gainArrRight
 
 	if(numbElemNotNegLeft + setOfLdMy[bestCutLvl] > k):
 		print "go left"
-		cutArray.extend(doSmartDecompRecursive(k, gainArrLeft, setOfLdMy, []))
+		cutArray.extend(doSmartDecompRecursive(k, gainArrLeft, setOfLdMy, realNumbNodes, []))
 	if(numbElemNotNegRight + setOfLdMy[bestCutLvl] > k):
 		print "go right"
-		cutArray.extend(doSmartDecompRecursive(k, gainArrRight, setOfLdMy, [])) 
+		cutArray.extend(doSmartDecompRecursive(k, gainArrRight, setOfLdMy, realNumbNodes, [])) 
 
 	return cutArray
 
